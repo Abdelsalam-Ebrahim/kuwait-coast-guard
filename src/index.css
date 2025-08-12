@@ -1,0 +1,23 @@
+/* Basic RTL-friendly resets and typography */
+:root {
+	color-scheme: light;
+	font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Naskh Arabic, Noto Sans Arabic, Arial, sans-serif;
+}
+
+html, body, #root {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	direction: rtl;
+	text-align: right;
+}
+
+nav a {
+	text-decoration: none;
+}
+
+nav a.active {
+	font-weight: 700;
+}

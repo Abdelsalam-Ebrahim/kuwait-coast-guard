@@ -1,0 +1,25 @@
+import React from 'react'
+import { Outlet, ScrollRestoration } from 'react-router-dom'
+import Container from '@mui/material/Container'
+import Navbar from '../components/Website/Navbar.jsx'
+import Footer from '../components/Website/Footer.jsx'
+
+
+const PublicLayout = () => {
+  return (
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+
+      <main style={{ flex: 1 }}>
+        <Container maxWidth="lg" sx={{ py: 3 }}>
+          <Outlet />
+        </Container>
+      </main>
+
+      <Footer />
+      <ScrollRestoration />
+    </div>
+  );
+}
+
+export default PublicLayout;
