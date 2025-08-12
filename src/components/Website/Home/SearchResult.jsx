@@ -32,14 +32,14 @@ const SearchResult = ({ results = [], loading = false, query = '' }) => {
 
   return (
     <>
-      <Slide direction="down" in={true} timeout={500}>
+      <Grow in={true} timeout={800}>
         <Box sx={{ mb: 1, display: 'flex', justifyContent: 'flex-start' }}>
           <Typography variant="body2" color="text.secondary">
             عدد النتائج: {results.length}
           </Typography>
         </Box>
-      </Slide>
-      <Grow in={true} timeout={600}>
+      </Grow>
+      <Grow in={true} timeout={800}>
         <TableContainer
           component={Paper}
           sx={{ 
