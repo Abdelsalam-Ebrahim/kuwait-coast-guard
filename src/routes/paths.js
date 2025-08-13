@@ -7,6 +7,12 @@ export const PATHS = {
   login: '/login',
   dashboard: '/dashboard',
   dashboardSignup: '/dashboard/signup',
+  printPreview: '/print-preview',
+  printAttendance: '/print-preview/attendance',
+  printDistribution: '/print-preview/distribution',
+  printOperations: '/print-preview/operations',
+  printCrews: '/print-preview/crews',
+  printOutsiders: '/print-preview/outsiders',
 }
 
 export default PATHS

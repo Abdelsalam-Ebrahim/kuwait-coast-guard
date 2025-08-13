@@ -1,11 +1,15 @@
-
-
+import { Container, Typography, Box } from '@mui/material';
+import Printing from "../../components/Website/Groups/Printing";
+import GroupMain from '../../components/Website/Groups/GroupMain';
+import Employees from '../../components/Website/Groups/Employees';
 
 const FirstGroup = () => {
   return (
-		<section style={{ padding: 24 }}>
-			<h1>السارية</h1>
-		</section>
+    <Container maxWidth="lg">
+			<Printing />
+      <Employees />
+      <GroupMain />
+    </Container>
   );
 }
 

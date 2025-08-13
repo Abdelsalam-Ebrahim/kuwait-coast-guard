@@ -70,19 +70,14 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
 
             {/* Desktop actions */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+              <Button component={NavLink} to={PATHS.root} color="inherit">الصفحة الرئيسية</Button>
+              <Button component={NavLink} to={PATHS.dashboard} color="inherit">لوحة التحكم</Button>
+              <Button component={NavLink} to={PATHS.contact} color="inherit">تواصل معنا</Button>
               <Typography variant="body1" sx={{ whiteSpace: 'nowrap' }}>مرحبًا، {userName}</Typography>
               <IconButton color="inherit" onClick={toggleColorMode} aria-label="تبديل الوضع">
                 {mode === 'dark' ? <FiSun /> : <FiMoon />}
               </IconButton>
-              <Button onClick={handleLogout} color="inherit" startIcon={<LogoutIcon />}>
-                تسجيل الخروج
-              </Button>
-              <Button component={NavLink} to={PATHS.contact} color="inherit">
-                تواصل معنا
-              </Button>
-              <Button component={NavLink} to={PATHS.dashboard} color="inherit">
-                لوحة التحكم
-              </Button>
+              <Button onClick={handleLogout} color="inherit" startIcon={<LogoutIcon />}>تسجيل الخروج</Button>
             </Box>
 
             {/* Mobile: user name + menu button */}
@@ -100,6 +95,7 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               >
+                <MenuItem onClick={() => handleNavigate(PATHS.root)}>الصفحة الرئيسية</MenuItem>
                 <MenuItem onClick={() => handleNavigate(PATHS.contact)}>تواصل معنا</MenuItem>
                 <MenuItem onClick={() => handleNavigate(PATHS.dashboard)}>لوحة التحكم</MenuItem>
                 <MenuItem onClick={() => { toggleColorMode(); closeMenu(); }}>
