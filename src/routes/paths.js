@@ -1,5 +1,6 @@
 export const PATHS = {
   root: '/',
+  home: '/home',
   courses: '/courses',
   malfunctions: '/malfunctions',
   elsaria: '/elsaria',
@@ -13,6 +14,8 @@ export const PATHS = {
   printOperations: '/print-preview/operations',
   printCrews: '/print-preview/crews',
   printOutsiders: '/print-preview/outsiders',
+  publicRegister: '/public-register',
+  notifications: '/notifications',
 }
 
 export default PATHS

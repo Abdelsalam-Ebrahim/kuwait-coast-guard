@@ -26,12 +26,15 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
   const userName = useMemo(() => userNameProp || localStorage.getItem('userName') || 'مستخدم', [userNameProp]);
 
   const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('adminToken');
+    navigate(PATHS.login);
     try {
       if (onLogout) onLogout();
       // default behavior: clear a generic auth key and go to login
       localStorage.removeItem('auth');
       navigate(PATHS.login);
-    } catch (_) {
+    } catch (error) {
       navigate(PATHS.login);
     }
   };
@@ -71,6 +74,7 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
             {/* Desktop actions */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Button component={NavLink} to={PATHS.root} color="inherit">الصفحة الرئيسية</Button>
+              <Button component={NavLink} to={PATHS.notifications} color="inherit">الإشعارات</Button>
               <Button component={NavLink} to={PATHS.dashboard} color="inherit">لوحة التحكم</Button>
               <Button component={NavLink} to={PATHS.contact} color="inherit">تواصل معنا</Button>
               <Typography variant="body1" sx={{ whiteSpace: 'nowrap' }}>مرحبًا، {userName}</Typography>
@@ -97,6 +101,7 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
               >
                 <MenuItem onClick={() => handleNavigate(PATHS.root)}>الصفحة الرئيسية</MenuItem>
                 <MenuItem onClick={() => handleNavigate(PATHS.contact)}>تواصل معنا</MenuItem>
+                <MenuItem onClick={() => handleNavigate(PATHS.notifications)}>الإشعارات</MenuItem>
                 <MenuItem onClick={() => handleNavigate(PATHS.dashboard)}>لوحة التحكم</MenuItem>
                 <MenuItem onClick={() => { toggleColorMode(); closeMenu(); }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

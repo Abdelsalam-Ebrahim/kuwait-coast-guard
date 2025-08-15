@@ -1,11 +1,12 @@
-
+import { Container } from "@mui/material";
+import CoursesTable from "../../components/Website/Courses/Courses";
 
 
 const Courses = () => {
   return (
-    	<section style={{ padding: 24 }}>
-			<h1>الدورات</h1>
-		</section>
+		<Container maxWidth="lg">
+			<CoursesTable />
+		</Container>
   );
 }
 

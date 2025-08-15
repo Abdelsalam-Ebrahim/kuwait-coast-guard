@@ -17,7 +17,7 @@ const items = [
   { key: 'third', title: 'السرية الثالثة', to: '/third-group', icon: <GroupIcon /> },
   { key: 'courses', title: 'الدورات', to: '/courses', icon: <SchoolIcon /> },
   { key: 'malfunctions', title: 'الأعطال', to: '/malfunctions', icon: <BuildIcon /> },
-  { key: 'record', title: 'السجل العام', to: null, icon: <ListAltIcon /> },
+  { key: 'record', title: 'السجل العام', to: '/public-register', icon: <ListAltIcon /> },
 ]
 
 const Groups = () => {

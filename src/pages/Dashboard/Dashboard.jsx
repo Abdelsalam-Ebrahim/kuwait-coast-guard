@@ -1,11 +1,12 @@
-
+import { Container } from "@mui/material";
+import Home from "../../components/Dashboard/Home";
 
 
 const Dashboard = () => {
   return (
-    	<section style={{ padding: 24 }}>
-			<h1>لوحة التحكم</h1>
-		</section>
+		<Container>
+			<Home />
+		</Container>
   );
 }
 

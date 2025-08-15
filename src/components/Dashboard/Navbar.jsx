@@ -23,7 +23,7 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
   const navigate = useNavigate();
   const [menuAnchor, setMenuAnchor] = useState(null);
 
-  const userName = useMemo(() => userNameProp || localStorage.getItem('userName') || 'مستخدم', [userNameProp]);
+  const userName = useMemo(() => userNameProp || 'مستخدم', [userNameProp]);
 
   const handleLogout = () => {
     try {
