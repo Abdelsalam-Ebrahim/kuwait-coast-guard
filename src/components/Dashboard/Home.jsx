@@ -20,7 +20,10 @@ import {
   Close as CloseIcon,
   Email as EmailIcon,
   ReportProblem as ReportProblemIcon,
-  AdminPanelSettings as AdminIcon
+  AdminPanelSettings as AdminIcon,
+  School as SchoolIcon,
+  MenuBook as CourseIcon,
+  Create as CreateIcon
 } from '@mui/icons-material';
 
 // Import existing components
@@ -31,8 +34,12 @@ import AddUser from './User/AddUser/AddUser';
 import EditUser from './User/EditUser/EditUser';
 import RemoveUser from './User/RemoveUser/RemoveUser';
 import Notification from './Notification/Notification';
-import ContactEmail from './Emails/ContactEmail';
-import MalfunctionsEmail from './Emails/MalfunctionsEmails';
+import CreateCourse from "./Courses/CreateCourse/CreateCourse";
+import EditCourse from "./Courses/EditCourse/EditCourse";
+import DeleteCourse from './Courses/DeleteCourse/DeleteCourse';
+import ContactEmails from './Emails/ContactEmails';
+import MalfunctionsEmails from './Emails/MalfunctionsEmails';
+import CoursesEmails from './Emails/CoursesEmails';
 
 // Static dashboard items definition
 const getDashboardItems = (theme) => [
@@ -83,21 +90,49 @@ const getDashboardItems = (theme) => [
     title: 'إرسال إشعار',
     icon: NotificationsIcon,
     component: Notification,
-    color: theme.palette.info.main,
+    color: '#9c27b0', // Purple for notifications
+  },
+  {
+    id: 'create-course',
+    title: 'إنشاء دورة',
+    icon: SchoolIcon,
+    component: CreateCourse,
+    color: '#4caf50', // Green for creating courses
+  },
+  {
+    id: 'edit-course',
+    title: 'تعديل دورة',
+    icon: CourseIcon,
+    component: EditCourse,
+    color: '#ff9800', // Orange for editing courses
+  },
+  {
+    id: 'delete-course',
+    title: 'حذف دورة',
+    icon: DeleteIcon,
+    component: DeleteCourse,
+    color: '#f44336', // Red for deleting courses
   },
   {
     id: 'contact-email',
     title: 'البريد الإلكتروني للتواصل',
     icon: EmailIcon,
-    component: ContactEmail,
-    color: theme.palette.info.main,
+    component: ContactEmails,
+    color: '#2196f3', // Blue for email communication
   },
   {
     id: 'malfunctions-email',
     title: 'البريد الإلكتروني للاعطال',
     icon: ReportProblemIcon,
-    component: MalfunctionsEmail,
-    color: theme.palette.info.main,
+    component: MalfunctionsEmails,
+    color: '#ff9800', // Orange for problems/malfunctions
+  },
+  {
+    id: 'courses-email',
+    title: 'البريد الإلكتروني للدورات',
+    icon: EmailIcon,
+    component: CoursesEmails,
+    color: '#8bc34a', // Light green for courses email
   },
 ];
 
@@ -147,7 +182,7 @@ const Home = () => {
           const Icon = item.icon;
           const isActive = selectedItemId === item.id;
           return (
-            <Grid item xs={6} sm={6} md={4} key={item.id} sx={{mx: { xs: 'auto', sm: 0 }}}>
+            <Grid item xs={6} key={item.id} sx={{mx: { xs: 'auto', sm: 0 }}}>
               <Card
                 sx={{
                   width: 200,

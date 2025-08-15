@@ -25,10 +25,6 @@ const Groups = () => {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>السرايا</Typography>
-      </Stack>
-
       <Box
         sx={{
           display: 'grid',

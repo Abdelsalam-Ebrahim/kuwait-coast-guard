@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Chip,
@@ -6,16 +5,6 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import {
-  Security as SecurityIcon,
-  Anchor as CaptainIcon,
-  Waves as NavyIcon,
-  Engineering as EngineerIcon,
-  MedicalServices as MedicalIcon,
-  Restaurant as ChefIcon,
-  Construction as TechnicalIcon,
-  RestaurantMenu as CookIcon
-} from '@mui/icons-material';
 
 const Employees = () => {
   const theme = useTheme();
@@ -24,7 +13,6 @@ const Employees = () => {
     {
       id: 1,
       title: 'ضباط',
-      icon: <SecurityIcon sx={{ fontSize: '2rem' }} />,
       total: 25,
       present: 22,
       missing: 3,
@@ -33,7 +21,6 @@ const Employees = () => {
     {
       id: 2,
       title: 'نواخذة',
-      icon: <CaptainIcon sx={{ fontSize: '2rem' }} />,
       total: 18,
       present: 16,
       missing: 2,
@@ -42,7 +29,6 @@ const Employees = () => {
     {
       id: 3,
       title: 'بحرية',
-      icon: <NavyIcon sx={{ fontSize: '2rem' }} />,
       total: 12,
       present: 11,
       missing: 1,
@@ -51,7 +37,6 @@ const Employees = () => {
     {
       id: 4,
       title: 'مدني فني',
-      icon: <EngineerIcon sx={{ fontSize: '2rem' }} />,
       total: 8,
       present: 7,
       missing: 1,
@@ -60,7 +45,6 @@ const Employees = () => {
     {
       id: 5,
       title: 'مهني فني',
-      icon: <TechnicalIcon sx={{ fontSize: '2rem' }} />,
       total: 6,
       present: 6,
       missing: 0,
@@ -69,7 +53,6 @@ const Employees = () => {
     {
       id: 6,
       title: 'مهني طباخ',
-      icon: <ChefIcon sx={{ fontSize: '2rem' }} />,
       total: 4,
       present: 4,
       missing: 0,
@@ -78,7 +61,6 @@ const Employees = () => {
     {
       id: 7,
       title: 'الجيس البنغالي فني',
-      icon: <TechnicalIcon sx={{ fontSize: '2rem' }} />,
       total: 10,
       present: 9,
       missing: 1,
@@ -87,17 +69,12 @@ const Employees = () => {
     {
       id: 8,
       title: 'الجيش البنغالي طباخ',
-      icon: <CookIcon sx={{ fontSize: '2rem' }} />,
       total: 7,
       present: 6,
       missing: 1,
       color: 'info'
     }
   ];
-
-  const calculateAttendanceRate = (present, total) => {
-    return Math.round((present / total) * 100);
-  };
 
   return (
     // i dont want to add container but i want to add some padding
@@ -112,7 +89,7 @@ const Employees = () => {
           color: 'text.primary'
         }}
       >
-        إحصائيات الموظفين
+        جاهزية السرية
       </Typography>
       
       <Box
@@ -132,7 +109,10 @@ const Employees = () => {
             key={employee.id}
             elevation={3}
             sx={{
-              p: 2.5,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              p: 2,
               borderRadius: 3,
               border: '1px solid',
               borderColor: 'transparent',
@@ -155,23 +135,12 @@ const Employees = () => {
             {/* Icon and Title */}
             <Box sx={{ 
               display: 'flex', 
-              alignItems: 'center', 
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
               mb: 1.75,
               gap: 1.5
             }}>
-              <Box
-                sx={{
-                  p: 1.5,
-                  borderRadius: 2,
-                  backgroundColor: `${theme.palette[employee.color].main}15`,
-                  color: theme.palette[employee.color].main,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                {employee.icon}
-              </Box>
               <Typography 
                 variant="h6" 
                 component="h3"
@@ -183,54 +152,51 @@ const Employees = () => {
               >
                 {employee.title}
               </Typography>
-            </Box>
 
-            {/* Statistics */}
-            <Box sx={{ mb: 2 }}>
               <Box sx={{
-                display: 'flex', 
-                justifyContent: 'space-between', 
+                display: 'flex',
                 alignItems: 'center',
-                mb: 1.5
+                gap: 0.5,
               }}>
                 <Typography variant="body2" color="text.secondary">
-                  إجمالي العدد
+                  إجمالي العدد:
                 </Typography>
                 <Typography 
                   variant="h5" 
                   sx={{ 
                     fontWeight: 700,
-                    color: theme.palette[employee.color].main
+                    color: theme.palette.info.main
                   }}
                 >
                   {employee.total}
                 </Typography>
               </Box>
+            </Box>
 
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                <Chip
-                  label={`حاضر: ${employee.present}`}
-                  size="small"
-                  sx={{
-                    backgroundColor: theme.palette.success.main,
-                    color: 'white',
-                    fontWeight: 600,
-                    fontSize: '0.75rem'
-                  }}
-                />
-                <Chip
-                  label={`غائب: ${employee.missing}`}
-                  size="small"
-                  sx={{
-                    backgroundColor: employee.missing > 0 
-                      ? theme.palette.error.main 
-                      : theme.palette.grey[400],
-                    color: 'white',
-                    fontWeight: 600,
-                    fontSize: '0.75rem'
-                  }}
-                />
-              </Box>
+            {/* Statistics */}
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+              <Chip
+                label={`حاضر: ${employee.present}`}
+                size="small"
+                sx={{
+                  backgroundColor: theme.palette.success.main,
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '0.75rem'
+                }}
+              />
+              <Chip
+                label={`الخوارج: ${employee.missing}`}
+                size="small"
+                sx={{
+                  backgroundColor: employee.missing > 0 
+                    ? theme.palette.error.main 
+                    : theme.palette.grey[400],
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '0.75rem'
+                }}
+              />
             </Box>
           </Paper>
         ))}

@@ -1,12 +1,11 @@
-import { Container, Typography } from '@mui/material';
 import React from 'react';
+import { Container, Typography } from '@mui/material';
+import NotificationsComponent from "../../components/Website/Notifications/Notifications";
 
 const Notifications = () => {
   return (
     <Container maxWidth="lg">
-      <Typography variant="h4" gutterBottom>
-        Notifications
-      </Typography>
+      <NotificationsComponent />
     </Container>
   );
 }

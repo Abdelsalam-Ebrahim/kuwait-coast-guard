@@ -184,10 +184,10 @@ const Operations = () => {
                     py: { xs: 1, sm: 1.5 },
                     px: { xs: 0.5, sm: 1 },
                     letterSpacing: '0.5px',
-                    minWidth: { xs: 100, sm: 120 }
+                    minWidth: { xs: 80, sm: 100 }
                   }}
                 >
-                  مكان الاستلام
+                  التوزيع
                 </TableCell>
                 <TableCell 
                   sx={{ 
@@ -197,11 +197,10 @@ const Operations = () => {
                     py: { xs: 1, sm: 1.5 },
                     px: { xs: 0.5, sm: 1 },
                     letterSpacing: '0.5px',
-                    textAlign: 'center',
-                    minWidth: { xs: 80, sm: 100 }
+                    minWidth: { xs: 100, sm: 120 }
                   }}
                 >
-                  التوزيع
+                  مكان الاستلام
                 </TableCell>
                 <TableCell 
                   sx={{ 
@@ -285,6 +284,30 @@ const Operations = () => {
                       py: { xs: 0.5, sm: 1 },
                       px: { xs: 0.5, sm: 1 },
                       borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
+                      minWidth: { xs: 80, sm: 100 }
+                    }}
+                  >
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        fontSize: { xs: '0.75rem', sm: '0.9rem' },
+                        fontWeight: employee.distribution ? 600 : 400,
+                        color: employee.distribution ? 'success.main' : 'text.secondary',
+                        backgroundColor: employee.distribution ? 'rgba(76, 175, 80, 0.1)' : 'rgba(158, 158, 158, 0.1)',
+                        px: { xs: 0.5, sm: 1.5 },
+                        py: 0.5,
+                        borderRadius: 1,
+                        display: 'inline-block'
+                      }}
+                    >
+                      {employee.distribution || "غير محدد"}
+                    </Typography>
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      py: { xs: 0.5, sm: 1 },
+                      px: { xs: 0.5, sm: 1 },
+                      borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
                       minWidth: { xs: 100, sm: 120 }
                     }}
                   >
@@ -317,31 +340,6 @@ const Operations = () => {
                         ))}
                       </Select>
                     </FormControl>
-                  </TableCell>
-                  <TableCell 
-                    sx={{ 
-                      py: { xs: 0.5, sm: 1 },
-                      px: { xs: 0.5, sm: 1 },
-                      borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
-                      textAlign: 'center',
-                      minWidth: { xs: 80, sm: 100 }
-                    }}
-                  >
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
-                        fontSize: { xs: '0.75rem', sm: '0.9rem' },
-                        fontWeight: employee.distribution ? 600 : 400,
-                        color: employee.distribution ? 'success.main' : 'text.secondary',
-                        backgroundColor: employee.distribution ? 'rgba(76, 175, 80, 0.1)' : 'rgba(158, 158, 158, 0.1)',
-                        px: { xs: 0.5, sm: 1.5 },
-                        py: 0.5,
-                        borderRadius: 1,
-                        display: 'inline-block'
-                      }}
-                    >
-                      {employee.distribution || "غير محدد"}
-                    </Typography>
                   </TableCell>
                   <TableCell 
                     sx={{ 

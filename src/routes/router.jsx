@@ -32,8 +32,6 @@ const ProtectLogin = ({ children }) => {
 };
 
 const router = createBrowserRouter([
-  { path: '/', element: <RootRedirect /> },
-  { path: '/login', lazy: () => import('../pages/Website/Login.jsx').then(m => ({ Component: () => <ProtectLogin><m.default /></ProtectLogin> })) },
   {
     path: '/',
     element: (
@@ -42,6 +40,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      { index: true, lazy: () => import('../pages/Website/Home.jsx').then(m => ({ Component: m.default })) },
       { path: 'home', lazy: () => import('../pages/Website/Home.jsx').then(m => ({ Component: m.default })) },
       { path: 'courses', lazy: () => import('../pages/Website/Courses.jsx').then(m => ({ Component: m.default })) },
       { path: 'malfunctions', lazy: () => import('../pages/Website/Malfunctions.jsx').then(m => ({ Component: m.default })) },
@@ -53,6 +52,7 @@ const router = createBrowserRouter([
       { path: 'notifications', lazy: () => import('../pages/Website/Notifications.jsx').then(m => ({ Component: m.default })) },
     ],
   },
+  { path: '/login', lazy: () => import('../pages/Website/Login.jsx').then(m => ({ Component: () => <ProtectLogin><m.default /></ProtectLogin> })) },
   {
     path: '/dashboard',
     element: (

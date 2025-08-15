@@ -13,6 +13,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import LogoutIcon from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 import { FiSun, FiMoon } from 'react-icons/fi'
 import { ColorModeContext } from '../../theme/ThemeProvider.jsx'
 import { colors } from '../../constants/colors.js'
@@ -73,11 +74,75 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
 
             {/* Desktop actions */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
-              <Button component={NavLink} to={PATHS.root} color="inherit">الصفحة الرئيسية</Button>
-              <Button component={NavLink} to={PATHS.notifications} color="inherit">الإشعارات</Button>
-              <Button component={NavLink} to={PATHS.dashboard} color="inherit">لوحة التحكم</Button>
-              <Button component={NavLink} to={PATHS.contact} color="inherit">تواصل معنا</Button>
-              <Typography variant="body1" sx={{ whiteSpace: 'nowrap' }}>مرحبًا، {userName}</Typography>
+              <Button 
+                component={NavLink} 
+                to={PATHS.root} 
+                color="inherit"
+                sx={{ 
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)' 
+                  },
+                  '&.active': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    fontWeight: 'bold'
+                  }
+                }}
+              >
+                الصفحة الرئيسية
+              </Button>
+
+              <Button 
+                component={NavLink} 
+                to={PATHS.dashboard} 
+                color="inherit"
+                sx={{ 
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)' 
+                  },
+                  '&.active': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    fontWeight: 'bold'
+                  }
+                }}
+              >
+                لوحة التحكم
+              </Button>
+              <Button 
+                component={NavLink} 
+                to={PATHS.contact} 
+                color="inherit"
+                sx={{ 
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)' 
+                  },
+                  '&.active': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    fontWeight: 'bold'
+                  }
+                }}
+              >
+                تواصل معنا
+              </Button>
+              <Typography variant="body1" sx={{ whiteSpace: 'nowrap' }}>ملازم اول, {userName}</Typography>
+              <IconButton 
+                component={NavLink} 
+                to={PATHS.notifications} 
+                color="inherit"
+                aria-label="الإشعارات"
+                sx={{ 
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)' 
+                  },
+                  '&.active': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    '& .MuiSvgIcon-root': {
+                      color: 'inherit'
+                    }
+                  }
+                }}
+              >
+                <NotificationsIcon />
+              </IconButton>
               <IconButton color="inherit" onClick={toggleColorMode} aria-label="تبديل الوضع">
                 {mode === 'dark' ? <FiSun /> : <FiMoon />}
               </IconButton>
@@ -99,10 +164,49 @@ const Navbar = ({ userName: userNameProp, onLogout }) => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               >
-                <MenuItem onClick={() => handleNavigate(PATHS.root)}>الصفحة الرئيسية</MenuItem>
-                <MenuItem onClick={() => handleNavigate(PATHS.contact)}>تواصل معنا</MenuItem>
-                <MenuItem onClick={() => handleNavigate(PATHS.notifications)}>الإشعارات</MenuItem>
-                <MenuItem onClick={() => handleNavigate(PATHS.dashboard)}>لوحة التحكم</MenuItem>
+                <MenuItem 
+                  onClick={() => handleNavigate(PATHS.root)}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                    }
+                  }}
+                >
+                  الصفحة الرئيسية
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleNavigate(PATHS.contact)}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                    }
+                  }}
+                >
+                  تواصل معنا
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleNavigate(PATHS.notifications)}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <NotificationsIcon fontSize="small" />
+                    الإشعارات
+                  </Box>
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleNavigate(PATHS.dashboard)}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                    }
+                  }}
+                >
+                  لوحة التحكم
+                </MenuItem>
                 <MenuItem onClick={() => { toggleColorMode(); closeMenu(); }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {mode === 'dark' ? <FiSun /> : <FiMoon />}

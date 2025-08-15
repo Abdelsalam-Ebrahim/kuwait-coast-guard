@@ -1,7 +1,7 @@
 import React from 'react';
 import EmailTable from './EmailTable';
 
-const ContactEmail = () => {
+const ContactEmails = () => {
   // Initial emails data for contact
   const initialEmails = [
     { id: 1, email: 'admin@coastguard.gov.kw' },
@@ -24,4 +24,4 @@ const ContactEmail = () => {
   );
 };
 
-export default ContactEmail;
+export default ContactEmails;

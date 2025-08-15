@@ -26,13 +26,14 @@ import {
 const CourseForm = ({ open, onClose, course }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const darkMode = theme.palette.mode === 'dark';
 
   const [formData, setFormData] = useState({
     name: '',
-    rank: '',
-    jobTitle: ''
+    phoneNumber: '',
+    jobTitle: '',
+    fileNumber: '',
+    employeeNumber: '',
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -121,6 +122,7 @@ const CourseForm = ({ open, onClose, course }) => {
             استمارة التسجيل في الدورة
           </Typography>
         </Box>
+
         <IconButton
           onClick={handleClose}
           sx={{
@@ -218,11 +220,13 @@ const CourseForm = ({ open, onClose, course }) => {
               بيانات المتقدم
             </Typography>
 
-            <Grid container spacing={{ xs: 2, sm: 3 }}>
+            <Grid container spacing={{ xs: 2, sm: 2 }}>
               {[
                 { label: 'الاسم الكامل', value: formData.name, field: 'name' },
-                { label: 'الرتبة', value: formData.rank, field: 'rank', half: true },
+                { label: 'رقم الهاتف', value: formData.phoneNumber, field: 'phoneNumber', half: true },
                 { label: 'المسمى الوظيفي', value: formData.jobTitle, field: 'jobTitle', half: true },
+                { label: 'رقم الملف', value: formData.fileNumber, field: 'fileNumber', half: true },
+                { label: 'رقم العسكري', value: formData.employeeNumber, field: 'employeeNumber', half: true },
               ].map((input, i) => (
                 <Grid item xs={12} md={input.half ? 6 : 12} key={i}>
                   <TextField

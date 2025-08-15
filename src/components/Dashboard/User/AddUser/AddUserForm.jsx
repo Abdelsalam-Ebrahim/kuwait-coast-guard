@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -37,7 +37,7 @@ const AddUserForm = ({ onSubmit, resetForm }) => {
   ];
 
   // Reset form when resetForm prop changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (resetForm) {
       setFormData({
         jobTitle: '',

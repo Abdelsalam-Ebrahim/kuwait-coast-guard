@@ -55,7 +55,7 @@ const SubNavbar = ({ activeTab, onTabChange }) => {
     },
     {
       id: 'replacement',
-      label: 'سمي البدل',
+      label: 'البدل',
       icon: <ReplaceIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
     },
     { 
