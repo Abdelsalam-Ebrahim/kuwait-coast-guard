@@ -1,16 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import PublicLayout from '../layouts/PublicLayout.jsx';
-import DashboardLayout from '../layouts/DashboardLayout.jsx';
+import Layout from "../layouts/Layout.jsx";
 
 const getAuthStatus = () => {
   const isAuthenticated = localStorage.getItem('authToken') === 'dummy-token';
   const isAdmin = localStorage.getItem('adminToken') === 'dummy-token';
   return { isAuthenticated, isAdmin };
-};
-
-const RootRedirect = () => {
-  const { isAuthenticated } = getAuthStatus();
-  return <Navigate to={isAuthenticated ? '/home' : '/login'} replace />;
 };
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -36,7 +30,7 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <ProtectedRoute>
-        <PublicLayout />
+        <Layout />
       </ProtectedRoute>
     ),
     children: [
@@ -57,7 +51,7 @@ const router = createBrowserRouter([
     path: '/dashboard',
     element: (
       <ProtectedRoute adminOnly>
-        <DashboardLayout />
+        <Layout />
       </ProtectedRoute>
     ),
     children: [

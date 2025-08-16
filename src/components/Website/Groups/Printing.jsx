@@ -1,53 +1,21 @@
 import React from 'react';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
-import printAudienceContent from './Printing/Audience';
-import printDistributionContent from './Printing/Distribution';
-import printOperationsContent from './Printing/Operations';
-import printCrewsContent from './Printing/Crews';
-import printOutsidersContent from './Printing/Outsiders';
+import printAudienceContent from './System/Audience/PrintAudience';
+import printDistributionContent from './System/Distribution/PrintDistribution';
+import printOperationsContent from './System/Operations/PrintOperations';
+import printCrewsContent from './System/Crews/PrintCrews';
+import printOutsidersContent from './System/Outsiders/PrintOutsiders';
+
+import { 
+  audienceData,
+  distributionData,
+  operationsData,
+  crewsData,
+  outsidersData
+} from "../../../constants/DUMMY_DATA";
 
 const Printing = () => {
-  // Sample attendance data
-  const attendanceData = [
-    { id: 1, fullName: 'أحمد محمد علي', rank: 'ملازم أول', jobTitle: 'ضابط بحري', category: 'ضباط', attendance: 'حاضر' },
-    { id: 2, fullName: 'محمد أحمد سالم', rank: 'ملازم', jobTitle: 'ضابط إنقاذ', category: 'ضباط', attendance: 'غائب' },
-    { id: 3, fullName: 'علي سالم محمد', rank: 'رقيب أول', jobTitle: 'مشغل راديو', category: 'ضباط صف', attendance: 'غائب' },
-    { id: 4, fullName: 'سالم أحمد علي', rank: 'رقيب', jobTitle: 'فني محركات', category: 'ضباط صف', attendance: 'غائب' },
-    { id: 5, fullName: 'محمد علي أحمد', rank: 'عريف', jobTitle: 'بحار', category: 'أفراد', attendance: 'حاضر' },
-    { id: 6, fullName: 'خالد عبدالله محمد', rank: 'نقيب', jobTitle: 'قائد دورية', category: 'ضباط', attendance: 'غائب' },
-    { id: 7, fullName: 'عبدالرحمن سالم أحمد', rank: 'رقيب أول', jobTitle: 'مشغل رادار', category: 'ضباط صف', attendance: 'حاضر' },
-  ];
-
-  // Sample distribution data
-  const distributionData = [
-    { id: 1, fullName: 'أحمد محمد علي', jobTitle: 'ضابط بحري', rank: 'المنطقة الشمالية', distribution: 'دورية بحرية' },
-    { id: 2, fullName: 'محمد أحمد سالم', jobTitle: 'ضابط إنقاذ', rank: 'المنطقة الجنوبية', distribution: 'مراقبة ساحلية' },
-    { id: 3, fullName: 'علي سالم محمد', jobTitle: 'مشغل راديو', rank: 'المنطقة الوسطى', distribution: 'اتصالات' },
-  ];
-
-  // Sample operations data
-  const operationsData = [
-    { id: 1, rank: 'ملازم أول', jobTitle: 'ضابط بحري', fullName: 'أحمد محمد علي', distribution: 'دورية بحرية', receiptLocation: 'الخليج الشمالي', phoneNumber: '12345678' },
-    { id: 2, rank: 'ملازم', jobTitle: 'ضابط إنقاذ', fullName: 'محمد أحمد سالم', distribution: 'مراقبة ساحلية', receiptLocation: 'قبالة الجزيرة الخضراء', phoneNumber: '23456789' },
-    { id: 3, rank: 'رقيب أول', jobTitle: 'مشغل راديو', fullName: 'علي سالم محمد', distribution: 'اتصالات', receiptLocation: 'المنطقة الوسطى', phoneNumber: '34567890' },
-  ];
-
-  // Sample outsiders data
-  const outsidersData = [
-    // has rank, jobtitle, name, reason, date, calender (from date to date)
-    { id: 1, fullName: 'أحمد محمد علي', jobTitle: 'ملازم أول', rank: 'المنطقة الشمالية', reason: 'إجازة مرضية', exitDate: '2025-08-15', expectedReturn: '2025-08-17', date: 'صح' },
-    { id: 2, fullName: 'محمد أحمد سالم', jobTitle: 'ملازم', rank: 'المنطقة الجنوبية', reason: 'مهمة رسمية', exitDate: '2025-08-15', expectedReturn: '2025-08-16', date: 'صح' },
-    { id: 2, fullName: 'محمد أحمد سالم', jobTitle: 'ملازم', rank: 'المنطقة الجنوبية', reason: 'مهمة رسمية', date: 'خطأ' },
-
-  ];
-
-  // Sample crews data
-  const crewsData = [
-    { id: 1, crewName: 'طاقم ألفا', leader: 'أحمد محمد علي', assistant: 'محمد أحمد سالم', mission: 'دورية بحرية', area: 'المنطقة الشمالية', timing: '06:00 - 14:00' },
-    { id: 2, crewName: 'طاقم بيتا', leader: 'علي سالم محمد', assistant: 'سالم أحمد علي', mission: 'مراقبة ساحلية', area: 'المنطقة الجنوبية', timing: '14:00 - 22:00' },
-  ];
-
   const printingOptions = [
     { id: 'audience', title: 'طباعة الحضور', enabled: true },
     { id: 'distribution', title: 'طباعة التوزيع', enabled: true },
@@ -61,7 +29,7 @@ const Printing = () => {
     if (!option.enabled) return;
     
     if (option.id === 'audience') {
-      printAudienceContent('الأولى', attendanceData);
+      printAudienceContent('الأولى', audienceData);
     } else if (option.id === 'distribution') {
       printDistributionContent('الأولى', distributionData);
     } else if (option.id === 'operations') {

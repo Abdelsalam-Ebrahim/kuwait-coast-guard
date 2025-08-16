@@ -1,45 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Container, Typography, Paper } from '@mui/material';
 import SubNavbar from './SubNavbar';
-import Audience from './System/Audience';
-import Distribution from './System/Distribution';
-import Operations from './System/Operations';
-import Outsiders from './System/Outsiders';
-import Crews from './System/Crews';
-import Archives from './System/Archives';
-import Replace from './System/Replacement';
-import Weather from './System/Weather';
+import Audience from './System/Audience/Audience';
+import Distribution from './System/Distribution/Distribution';
+import Operations from './System/Operations/Operations';
+import Outsiders from './System/Outsiders/Outsiders';
+import Crews from './System/Crews/Crews';
+import Archives from './System/Archives/Archives';
+import Replacement from './System/Replacement/Replacement';
+import Weather from './System/Weather/Weather';
+
+// Dummy data
+import {
+  audienceData,
+  distributionData,
+  operationsData,
+  outsidersData,
+  crewsData,
+  archiveData,
+  replacementData,
+} from "../../../constants/DUMMY_DATA";
 
 const GroupMain = () => {
   const [activeTab, setActiveTab] = useState('attendance');
+  const [employees, setEmployees] = useState({
+    audience: audienceData,
+    distribution: distributionData,
+    operations: operationsData,
+    outsiders: outsidersData,
+    crews: crewsData,
+    replacement: replacementData,
+  });
+  
+  // Ref to store the navigation handler from child components
+  const navigationHandlerRef = useRef(null);
 
   const handleTabChange = (tabId) => {
-    setActiveTab(tabId);
+    // If there's a navigation handler (from a component with unsaved changes), use it
+    if (navigationHandlerRef.current) {
+      navigationHandlerRef.current(() => setActiveTab(tabId));
+    } else {
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleEmployeesChange = (type, updatedEmployees) => {
+    setEmployees(prev => ({
+      ...prev,
+      [type]: updatedEmployees
+    }));
+  };
+
+  const handleNavigationHandler = (handler) => {
+    navigationHandlerRef.current = handler;
   };
 
   const renderContent = () => {
     switch (activeTab) {
       case 'attendance':
-        return <Audience />;
+        return (
+          <Audience 
+            employees={employees.audience} 
+            isShownInArchive={false}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('audience', updatedEmployees)}
+            onNavigateAway={handleNavigationHandler}
+          />
+        );
       
       case 'distribution':
-        return <Distribution />;
-      
+        return (
+          <Distribution 
+            employees={employees.distribution} 
+            isShownInArchive={false}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('distribution', updatedEmployees)}
+            onNavigateAway={handleNavigationHandler}
+          />
+        );
+
       case 'operations':
-        return <Operations />;
-      
+        return (
+          <Operations 
+            employees={employees.operations} 
+            isShownInArchive={false}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('operations', updatedEmployees)}
+            onNavigateAway={handleNavigationHandler}
+          />
+        );
+
       case 'outsiders':
-        return <Outsiders />;
-      
+        return (
+          <Outsiders 
+            employees={employees.outsiders} 
+            isShownInArchive={false}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('outsiders', updatedEmployees)}
+            onNavigateAway={handleNavigationHandler}
+          />
+        );
+
       case 'crews':
-        return <Crews />;
-      
+        return <Crews employees={employees.crews} />;
+
       case 'archive':
-        return <Archives />;
-      
+        return <Archives employees={archiveData} />;
+
       case 'replacement':
-        return <Replace />;
-      
+        return (
+          <Replacement 
+            employees={employees.replacement || replacementData}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('replacement', updatedEmployees)}
+            onNavigateAway={handleNavigationHandler}
+          />
+        );
+
       case 'weather':
         return <Weather />;
       

@@ -1,6 +1,6 @@
 import { Link, useRouteError } from 'react-router-dom';
-import Navbar from '../components/Website/Navbar';
-import Footer from '../components/Website/Footer';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const NotFound = () => {
   const err = useRouteError?.() || {}
