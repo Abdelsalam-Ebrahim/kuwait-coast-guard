@@ -18,7 +18,7 @@ const useUnsavedChanges = (initialData = null, enabled = true) => {
     setCurrentData(initialData);
     initialDataRef.current = JSON.stringify(initialData);
     setHasChanges(false);
-  }, [initialData]);
+  }, [JSON.stringify(initialData)]); // Use JSON.stringify to avoid infinite re-renders
 
   // Check for changes whenever currentData changes
   useEffect(() => {

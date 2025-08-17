@@ -138,7 +138,7 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
             isPrinting={true}
             isSaving={true}
             hasChanges={hasChanges}
-            printFn={() => printOutsiders('الاولي', currentEmployees)}
+            printFn={() => printOutsiders('الاولي', employees)}
             saveFn={handleSaveChanges}
             onNavigationAttempt={handleNavigationAttempt}
           />

@@ -8,6 +8,7 @@ import Outsiders from './System/Outsiders/Outsiders';
 import Crews from './System/Crews/Crews';
 import Archives from './System/Archives/Archives';
 import Replacement from './System/Replacement/Replacement';
+import Technical from './System/Technical/Technical';
 import Weather from './System/Weather/Weather';
 
 // Dummy data
@@ -19,6 +20,7 @@ import {
   crewsData,
   archiveData,
   replacementData,
+  technicalData,
 } from "../../../constants/DUMMY_DATA";
 
 const GroupMain = () => {
@@ -30,6 +32,7 @@ const GroupMain = () => {
     outsiders: outsidersData,
     crews: crewsData,
     replacement: replacementData,
+    technical: technicalData,
   });
   
   // Ref to store the navigation handler from child components
@@ -108,6 +111,15 @@ const GroupMain = () => {
           <Replacement 
             employees={employees.replacement || replacementData}
             onEmployeesChange={(updatedEmployees) => handleEmployeesChange('replacement', updatedEmployees)}
+            onNavigateAway={handleNavigationHandler}
+          />
+        );
+
+      case 'technical':
+        return (
+          <Technical 
+            employees={employees.technical || technicalData}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('technical', updatedEmployees)}
             onNavigateAway={handleNavigationHandler}
           />
         );

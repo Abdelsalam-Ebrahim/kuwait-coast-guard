@@ -105,7 +105,7 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
             isPrinting={true}
             isSaving={true}
             hasChanges={hasChanges}
-            printFn={() => printOperations('الاولي', currentEmployees)}
+            printFn={() => printOperations('الاولي', employees)}
             saveFn={handleSaveChanges}
             onNavigationAttempt={handleNavigationAttempt}
           />

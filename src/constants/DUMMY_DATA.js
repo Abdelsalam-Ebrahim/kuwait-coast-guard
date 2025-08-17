@@ -1,3 +1,63 @@
+// Employee data
+export const employeeData = [
+  {
+    id: 1,
+    title: 'ضباط',
+    total: 25,
+    present: 22,
+    missing: 3,
+  },
+  {
+    id: 2,
+    title: 'نواخذة',
+    total: 18,
+    present: 16,
+    missing: 2,
+  },
+  {
+    id: 3,
+    title: 'بحرية',
+    total: 12,
+    present: 11,
+    missing: 1,
+  },
+  {
+    id: 4,
+    title: 'مدني فني',
+    total: 8,
+    present: 7,
+    missing: 1,
+  },
+  {
+    id: 5,
+    title: 'مهني فني',
+    total: 6,
+    present: 6,
+    missing: 0,
+  },
+  {
+    id: 6,
+    title: 'مهني طباخ',
+    total: 4,
+    present: 4,
+    missing: 0,
+  },
+  {
+    id: 7,
+    title: 'الجيس البنغالي فني',
+    total: 10,
+    present: 9,
+    missing: 1,
+  },
+  {
+    id: 8,
+    title: 'الجيش البنغالي طباخ',
+    total: 7,
+    present: 6,
+    missing: 1,
+  }
+];
+
 // Sample audience data
 export const audienceData = [
   { id: 1, fullName: 'أحمد محمد علي', rank: 'ملازم أول', jobTitle: 'ضابط بحري', category: 'ضباط', attendance: true },
@@ -122,4 +182,88 @@ export const replacementData = [
     rank: 'المنطقة الجنوبية',
     reason: ['خوارج', 'حضور', 'توزيع', 'عمليات'],
   },
+];
+
+// Sample technical data
+export const technicalData = [
+  {
+    id: 1,
+    fullName: 'أحمد محمد علي',
+    rank: 'المنطقة الشمالية',
+    reason: ['خوارج', 'حضور', 'توزيع', 'عمليات'],
+  },
+  {
+    id: 2,
+    fullName: 'محمد أحمد سالم',
+    rank: 'المنطقة الجنوبية',
+    reason: ['خوارج', 'حضور', 'توزيع', 'عمليات'],
+  },
+  {
+    id: 2,
+    fullName: 'محمد أحمد سالم',
+    rank: 'المنطقة الجنوبية',
+    reason: ['خوارج', 'حضور', 'توزيع', 'عمليات'],
+  },
+];
+
+
+// ----------------------------------------------------------------------------------------
+// ****************************************************************************************
+// ----------------------------------------------------------------------------------------
+
+// Malfunctions data
+export const malfunctionsData = [
+  {
+    id: 1,
+    title: 'الزوارق',
+    total: 6,
+    valid: 22,
+    notValid: 3,
+  },
+  {
+    id: 2,
+    title: 'الوحدات',
+    total: 4,
+    valid: 4,
+    notValid: 0,
+  },
+  {
+    id: 3,
+    title: 'الربس',
+    total: 13,
+    valid: 11,
+    notValid: 2,
+  },
+  {
+    id: 4,
+    title: 'تامبه',
+    total: 17,
+    valid: 14,
+    notValid: 1,
+  },
+  {
+    id: 5,
+    title: 'كونسبت',
+    total: 3,
+    valid: 2,
+    notValid: 1,
+  },
+  {
+    id: 6,
+    title: 'مجنم',
+    total: 1,
+    valid: 1,
+    notValid: 0,
+  },
+];
+
+// Sample malfunctions table data
+export const malfunctionsTablesData = [
+  { id: 1, malfunctionNumber: 'عطل في المحرك', valid: true, reportText: 'تم إصلاح المحرك بنجاح.', fixTime: '3 ايام', notes: '' },
+  { id: 2, malfunctionNumber: 'عطل في نظام الملاحة', valid: true, reportText: 'تم إصلاح نظام الملاحة بنجاح.', fixTime: '3 ايام', notes: ''},
+  { id: 3, malfunctionNumber: 'عطل في الراديو', valid: true, reportText: 'تم إصلاح الراديو بنجاح.', fixTime: '3 ايام', notes: 'قسم الكهرباء'},
+  { id: 4, malfunctionNumber: 'عطل في المحركات', valid: true, reportText: 'تم إصلاح المحركات بنجاح.', fixTime: '3 ايام', notes: ''},
+  { id: 5, malfunctionNumber: 'عطل في نظام التوجيه', valid: true, reportText: 'تم إصلاح نظام التوجيه بنجاح.', fixTime: '3 ايام', notes: ''},
+  { id: 6, malfunctionNumber: 'عطل في نظام الإضاءة', valid: true, reportText: 'تم إصلاح نظام الإضاءة بنجاح.', fixTime: '3 ايام', notes: ''},
+  { id: 7, malfunctionNumber: 'عطل في نظام الرادار', valid: true, reportText: 'تم إصلاح نظام الرادار بنجاح.', fixTime: '3 ايام', notes: 'قسم الرادار'},
 ];

@@ -75,7 +75,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
       return changes;
     });
   };
-  
+
   return (
     <Box sx={{ py: 3 }}>
       <Paper elevation={1} sx={{ borderRadius: 2, p: { xs: isShownInArchive ? 0 : 1.5, sm: isShownInArchive ? 0 : 2, md: isShownInArchive ? 0 : 3 } }}>
@@ -85,7 +85,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
             isPrinting={true}
             isSaving={true}
             hasChanges={hasChanges}
-            printFn={() => printAudience('الاولي', currentEmployees)}
+            printFn={() => printAudience('الاولي', employees)}
             saveFn={handleSaveChanges}
             onNavigationAttempt={handleNavigationAttempt}
           />
@@ -191,6 +191,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {currentEmployees.map((employee, index) => (
                 <TableRow

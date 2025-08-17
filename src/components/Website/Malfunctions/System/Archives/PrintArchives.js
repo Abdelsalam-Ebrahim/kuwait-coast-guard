@@ -1,11 +1,13 @@
 // Utility functions for printing components
 
-const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
+const printArchives = (groupNumber = 'الأولى', attendanceData = []) => {
   const tableHeaders = [
-    'الحضور',
-    'المسمى الوظيفي',
-    'الرتبة',
-    'الاسم الكامل', 
+    'اليوم',
+    'التاريخ',
+    'الوقت',
+    'المستخدم', 
+    'النوع',
+    'التفاصيل',
   ];
 
   // Get current date and time in Arabic
@@ -144,12 +146,14 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
             </tr>
           </thead>
           <tbody>
-            ${audienceData.map((row, index) => `
+            ${attendanceData.map((row, index) => `
               <tr${index % 2 === 1 ? ' style="background-color: #fafafa;"' : ''}>
-                <td>${row.attendance ? '<span style="color: green;">✔️</span>' : '<span style="color: red;">✖️</span>'}</td>
-                <td>${row.jobTitle}</td>
-                <td>${row.rank}</td>
-                <td>${row.fullName}</td>
+                <td>${row.day}</td>
+                <td>${row.date}</td>
+                <td>${row.time}</td>
+                <td>${row.user}</td>
+                <td>${row.type}</td>
+                <td>${row.details}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -184,4 +188,4 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
   frameDoc.close();
 };
 
-export default printAudience;
+export default printArchives;

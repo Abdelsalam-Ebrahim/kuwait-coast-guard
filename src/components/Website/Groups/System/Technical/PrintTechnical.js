@@ -1,11 +1,10 @@
 // Utility functions for printing components
 
-const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
+const printTechnical = (groupNumber = 'الأولى', technicalData = [], tableHeadCalendar = []) => {
   const tableHeaders = [
-    'الحضور',
-    'المسمى الوظيفي',
     'الرتبة',
-    'الاسم الكامل', 
+    'الاسم',
+    ...tableHeadCalendar,
   ];
 
   // Get current date and time in Arabic
@@ -41,7 +40,7 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>كشف الحضور</title>
+      <title>كشف الفنية</title>
       <style>
         * {
           margin: 0;
@@ -130,13 +129,12 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
         <div class="header">
           <h1>خفر السواحل - القطاع الأوسط</h1>
           <h2>السرية ${groupNumber}</h2>
-          <h3>كشف الحضور</h3>
+          <h3>كشف الفنية</h3>
           <div class="date">
             <p>${currentDate}</p>
             <p>الساعة: ${currentTime}</p>
           </div>
         </div>
-        
         <table>
           <thead>
             <tr>
@@ -144,12 +142,11 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
             </tr>
           </thead>
           <tbody>
-            ${audienceData.map((row, index) => `
+            ${technicalData.map((row, index) => `
               <tr${index % 2 === 1 ? ' style="background-color: #fafafa;"' : ''}>
-                <td>${row.attendance ? '<span style="color: green;">✔️</span>' : '<span style="color: red;">✖️</span>'}</td>
-                <td>${row.jobTitle}</td>
                 <td>${row.rank}</td>
                 <td>${row.fullName}</td>
+                ${row.reason.map(reason => `<td>${reason}</td>`).join('')}
               </tr>
             `).join('')}
           </tbody>
@@ -184,4 +181,4 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
   frameDoc.close();
 };
 
-export default printAudience;
+export default printTechnical;

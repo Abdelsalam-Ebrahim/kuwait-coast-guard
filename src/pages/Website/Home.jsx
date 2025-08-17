@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Groups from "../../components/Website/Home/Groups";
-import Search from "../../components/Website/Home/Search";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 
@@ -9,7 +8,6 @@ const Home = () => {
 
 	return (
 		<Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3 } }}>
-			<Search onSearchStateChange={setIsSearching} />
 			<Box
 				sx={{
 					transform: isSearching ? 'translateY(20px)' : 'translateY(0)',

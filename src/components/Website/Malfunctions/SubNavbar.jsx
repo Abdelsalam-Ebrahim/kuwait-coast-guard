@@ -25,49 +25,39 @@ const SubNavbar = ({ activeTab, onTabChange }) => {
   
   const navItems = [
     { 
-      id: 'attendance', 
-      label: 'الحضور', 
+      id: 'canoes', 
+      label: 'الزوراق', 
       icon: <PeopleIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
     },
     { 
-      id: 'distribution', 
-      label: 'التوزيع', 
+      id: 'units', 
+      label: 'الوحدات', 
       icon: <AssignmentIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
     },
     { 
-      id: 'operations', 
-      label: 'العمليات', 
+      id: 'rabs', 
+      label: 'الربس', 
       icon: <SecurityIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
     },
     { 
-      id: 'outsiders', 
-      label: 'الخوارج', 
+      id: 'tampa', 
+      label: 'تامبه', 
       icon: <ExitToAppIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
     },
     { 
-      id: 'crews', 
-      label: 'الطواقم', 
+      id: 'concept', 
+      label: 'كونسبت', 
       icon: <GroupsIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
+    },
+    { 
+      id: 'magnum', 
+      label: 'مجنم', 
+      icon: <WeatherIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
     },
     { 
       id: 'archive', 
       label: 'الارشيف', 
-      icon: <ArchiveIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
-    },
-    {
-      id: 'replacement',
-      label: 'البدل',
-      icon: <ReplaceIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-    },
-    {
-      id: 'technical',
-      label: 'الفنية',
-      icon: <EngineeringIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-    },
-    { 
-      id: 'weather', 
-      label: 'الطقس', 
-      icon: <WeatherIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> 
+      icon: <ArchiveIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
     },
   ];
 

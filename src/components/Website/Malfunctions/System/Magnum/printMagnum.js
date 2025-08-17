@@ -1,6 +1,6 @@
 // Utility functions for printing components
 
-const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
+const printMagnum = (groupNumber = 'الأولى', magnumData = []) => {
   const tableHeaders = [
     'الحضور',
     'المسمى الوظيفي',
@@ -144,7 +144,7 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
             </tr>
           </thead>
           <tbody>
-            ${audienceData.map((row, index) => `
+            ${magnumData.map((row, index) => `
               <tr${index % 2 === 1 ? ' style="background-color: #fafafa;"' : ''}>
                 <td>${row.attendance ? '<span style="color: green;">✔️</span>' : '<span style="color: red;">✖️</span>'}</td>
                 <td>${row.jobTitle}</td>
@@ -184,4 +184,4 @@ const printAudience = (groupNumber = 'الأولى', audienceData = []) => {
   frameDoc.close();
 };
 
-export default printAudience;
+export default printMagnum;
