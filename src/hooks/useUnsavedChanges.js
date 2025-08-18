@@ -76,6 +76,7 @@ const useUnsavedChanges = (initialData = null, enabled = true) => {
   const handleConfirmCancel = useCallback(() => {
     setShowConfirmationModal(false);
     setPendingNavigation(null);
+    // Don't clear the navigation handler here - keep it for future navigation attempts
   }, []);
 
   // Reset changes
@@ -101,6 +102,13 @@ const useUnsavedChanges = (initialData = null, enabled = true) => {
     }
   }, [handleNavigationAttempt]);
 
+  // Clear navigation handler
+  const clearNavigationHandler = useCallback((onNavigateAway) => {
+    if (onNavigateAway) {
+      onNavigateAway(null);
+    }
+  }, []);
+
   return {
     currentData,
     hasChanges,
@@ -114,6 +122,7 @@ const useUnsavedChanges = (initialData = null, enabled = true) => {
     resetChanges,
     getChangesData,
     exposeNavigationHandler,
+    clearNavigationHandler,
     setShowConfirmationModal
   };
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, useTheme } from '@mui/material';
-import ConfirmationModal from '../../ConfirmationModal';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 import EditAccountForm from './EditAccountForm';
-import SearchInput from '../../SearchInput';
+import SearchInput from '../../Home/SearchInput';
 import SearchResult from './SearchResult';
 import toast from 'react-hot-toast';
 

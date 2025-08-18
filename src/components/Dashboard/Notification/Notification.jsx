@@ -5,7 +5,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 import toast from 'react-hot-toast';
-import SearchInput from '../SearchInput';
+import SearchInput from '../Home/SearchInput';
 import SearchResult from './SearchResult';
 import NotificaitonText from './NotificaitonText';
 

@@ -3,38 +3,46 @@ import { Toaster } from 'react-hot-toast';
 import router from './routes/router';
 import ThemeProvider from './theme/ThemeProvider.jsx';
 import AuthProvider from './store/AuthContext.jsx';
-import FirstGroupProvider from './store/FirstGroupContext.jsx';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useTheme } from '@mui/material/styles';
+import { queryClient } from './util/constants.js';
+
 
 const App = () => {
+  const theme = useTheme();
+
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <FirstGroupProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
           <RouterProvider router={router} />
+
           <Toaster
             position="top-center"
             toastOptions={{
-              duration: 4000,
+              duration: 3000,
               style: {
-                background: '#333',
-                color: '#fff',
-                fontFamily: 'Arial, sans-serif',
+                fontSize: '14px',
+                fontFamily: 'inherit',
                 textAlign: 'center'
               },
               success: {
                 style: {
-                  background: '#4caf50'
+                  background: theme.palette.success.main,
+                  color: theme.palette.success.contrastText,
                 }
               },
               error: {
                 style: {
-                  background: '#f44336'
+                  background: theme.palette.error.main,
+                  color: theme.palette.error.contrastText,
                 }
               }
             }}
           />
-        </FirstGroupProvider>
-      </AuthProvider>
+
+        </AuthProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 };

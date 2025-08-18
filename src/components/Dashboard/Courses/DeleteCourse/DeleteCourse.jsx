@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import SearchInput from '../../SearchInput';
+import SearchInput from '../../Home/SearchInput';
 import SearchResult from './SearchResult';
-import ConfirmationModal from '../../ConfirmationModal';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 const DeleteCourse = () => {

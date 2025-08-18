@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import Home from "../../components/Dashboard/Home";
+import Home from "../../components/Dashboard/Home/Home";
 
 
 const Dashboard = () => {

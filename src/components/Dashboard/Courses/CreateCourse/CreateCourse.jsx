@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CourseForm from './CourseForm';
 import { Box, useTheme } from '@mui/material';
-import ConfirmationModal from '../../ConfirmationModal';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 const CreateCourse = () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -21,7 +21,7 @@ import {
   Check as CheckIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import ConfirmationModal from '../ConfirmationModal';
+import ConfirmationModal from '../Ui/ConfirmationModal';
 import toast, { Toaster } from 'react-hot-toast';
 
 const EmailTable = ({ 

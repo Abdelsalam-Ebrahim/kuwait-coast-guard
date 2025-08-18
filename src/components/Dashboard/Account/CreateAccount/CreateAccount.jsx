@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import CreateAccountForm from './CreateAccountForm';
-import ConfirmationModal from '../../ConfirmationModal';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 const CreateAccount = () => {
