@@ -4,7 +4,7 @@ import {
   Box,
 } from '@mui/material';
 import DistributionTables from './DistributionTables';
-import SystemHeader from '../SystemHeader';
+import SystemHeader from '../../Ui/SystemHeader';
 import printCrews from './PrintCrews';
 
 const Crews = ({ employees, onNavigateAway }) => {

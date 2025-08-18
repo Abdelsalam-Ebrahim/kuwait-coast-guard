@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { Alert, Box, CircularProgress, Container, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
@@ -6,14 +6,17 @@ import { getAllEmployeesBySquad } from '../../util/employeeHttp';
 import Printing from "../../components/Website/Squads/Printing";
 import GroupMain from '../../components/Website/Squads/GroupMain';
 import Employees from '../../components/Website/Squads/Employees';
+import { useContext } from 'react';
+import { AuthContext } from '../../store/AuthContext';
 
 
 const Squad = () => {
-  
+
+  const { token, logout } = useContext(AuthContext);
   const { id } = useParams();
   const { data, isPending, error, isError } = useQuery({
-    queryKey: ['squad', id],
-    queryFn: ({ signal }) => getAllEmployeesBySquad(signal, id)
+    queryKey: ["employees", id],
+    queryFn: ({ signal }) => getAllEmployeesBySquad(signal, id, token)
   });
 
   if (isPending) {
@@ -35,7 +38,7 @@ const Squad = () => {
     return (
       <Container maxWidth="sm" sx={{ mt: 4 }}>
         <Alert severity="error">
-          <Typography variant="h6">Something went wrong</Typography>
+          <Typography variant="h6">حدث خطأ ما</Typography>
           <Typography variant="body2">{error.message}</Typography>
         </Alert>
       </Container>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient } from "../../../../util/constants";
 import toast from 'react-hot-toast';
+import { useAuth } from '../../../../store/AuthContext';
 
 
 const initialFormData = {
@@ -14,12 +15,13 @@ const initialFormData = {
 };
 
 const useUserManager = (mutationFn, successMessage, errorMessage, mode = 'add') => {
+  const { token } = useAuth();
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const { mutate, isPending } = useMutation({
-    mutationFn,
+    mutationFn: () => mutationFn(formData, token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       toast.success(successMessage);

@@ -1,13 +1,8 @@
-import {
-  Box,
-  Chip,
-  Paper,
-  Typography,
-  useTheme
-} from '@mui/material';
+import { Box, Chip, Paper, Typography, useTheme } from '@mui/material';
 
 const EmployeeCard = ({ employee }) => {
   const theme = useTheme();
+  const absence = employee.total - employee.present;
 
   return (
     <Paper
@@ -54,7 +49,7 @@ const EmployeeCard = ({ employee }) => {
             fontSize: { xs: '1rem', sm: '1.1rem' }
           }}
         >
-          {employee.title}
+          {employee.name}
         </Typography>
 
         <Box sx={{
@@ -63,7 +58,7 @@ const EmployeeCard = ({ employee }) => {
           gap: 0.5,
         }}>
           <Typography variant="body2" color="text.secondary">
-            إجمالي العدد:
+            العدد:
           </Typography>
           <Typography 
             variant="h5" 
@@ -90,11 +85,11 @@ const EmployeeCard = ({ employee }) => {
           }}
         />
         <Chip
-          label={`الخوارج: ${employee.missing}`}
+          label={`الخوارج: ${absence}`}
           size="small"
           sx={{
-            backgroundColor: employee.missing > 0 
-              ? theme.palette.error.main 
+            backgroundColor: absence > 0
+              ? theme.palette.error.main
               : theme.palette.grey[400],
             color: 'white',
             fontWeight: 600,

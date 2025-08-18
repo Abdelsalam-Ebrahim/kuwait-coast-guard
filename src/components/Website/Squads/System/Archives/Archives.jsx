@@ -24,15 +24,15 @@ import {
 } from '@mui/icons-material';
 
 // import components
-import SystemHeader from '../SystemHeader';
-import Audience from '../Audience/Audience';
+import SystemHeader from '../../Ui/SystemHeader';
+import Audience from '../Attendance/Attendance';
 import Distribution from '../Distribution/Distribution';
 import Operations from '../Operations/Operations';
 import Outsiders from '../Outsiders/Outsiders';
 
 // import printing
 import printArchives from './PrintArchives';
-import printAudience from "../Audience/PrintAudience";
+import printAttendance from "../Attendance/PrintAttendance";
 import printDistribution from '../Distribution/PrintDistribution';
 import printOperations from '../Operations/PrintOperations';
 import printOutsiders from '../Outsiders/PrintOutsiders';
@@ -44,12 +44,23 @@ import {
   operationsData,
   outsidersData
 } from "../../../../../constants/DUMMY_DATA";
+import CustomTableHead from '../../Ui/TableHead';
 
 
 
 const Archives = ({ employees, onNavigateAway }) => {
   const theme = useTheme();
   const [expandedRow, setExpandedRow] = useState(null);
+
+  const tableHeadContent = [
+    { label: 'اليوم', style: { px: 2 } },
+    { label: 'التاريخ' },
+    { label: 'الوقت', style: { textAlign: 'center' } },
+    { label: 'المستخدم' },
+    { label: 'النوع', style: { textAlign: 'center' } },
+    { label: 'التفاصيل' },
+    { label: 'الخيارات', style: { textAlign: 'center' } },
+  ];
 
   // Clear any existing navigation handlers when this component mounts
   useEffect(() => {
@@ -90,7 +101,7 @@ const Archives = ({ employees, onNavigateAway }) => {
   }
 
   function handlePrint(type) {
-    if(type === 'حضور') return printAudience('الاولي', audienceData);
+    if(type === 'حضور') return printAttendance('الاولي', audienceData);
     if(type === 'توزيع') return printDistribution('الاولي', distributionData);
     if(type === 'عمليات') return printOperations('الاولي', operationsData);
     
@@ -130,110 +141,7 @@ const Archives = ({ employees, onNavigateAway }) => {
           }}
         >
           <Table sx={{ minWidth: 1000 }}>
-            <TableHead>
-              <TableRow 
-                sx={{ 
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  '& .MuiTableCell-head': {
-                    borderBottom: 'none'
-                  }
-                }}
-              >
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 1.5, sm: 2 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 70, sm: 80 }
-                  }}
-                >
-                  اليوم
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 90, sm: 100 }
-                  }}
-                >
-                  التاريخ
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 60, sm: 70 }
-                  }}
-                >
-                  الوقت
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 120, sm: 150 }
-                  }}
-                >
-                  المستخدم
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    textAlign: 'center',
-                    minWidth: { xs: 80, sm: 90 }
-                  }}
-                >
-                  النوع
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 150, sm: 200 }
-                  }}
-                >
-                  التفاصيل
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    textAlign: 'center',
-                    minWidth: { xs: 200, sm: 250 }
-                  }}
-                >
-                  الخيارات
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <CustomTableHead columnsName={tableHeadContent} />
 
             <TableBody>
               {archiveData.map((item, index) => (

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -111,62 +110,19 @@ const ConfirmationModal = ({
             >
               {Array.isArray(changesData) && changesData.length > 0 ? (
                 changesData.map((change, index) => (
-                  <Typography 
-                    key={index} 
-                    variant="body2" 
-                    sx={{ 
-                      mb: 1, 
-                      p: 1, 
+                  <Typography
+                    key={index}
+                    variant="body2"
+                    sx={{
+                      mb: 1,
+                      p: 1,
                       bgcolor: 'grey.50', 
                       borderRadius: 1,
                       fontSize: '0.85rem',
                       fontFamily: 'monospace'
                     }}
                   >
-                    {/* Employee-related changes */}
-                    {change.employeeName && change.oldValue !== undefined && change.newValue !== undefined && (
-                      `${change.employeeName}: كان ${change.oldValue || 'غير محدد'} والآن ${change.newValue || 'غير محدد'}`
-                    )}
-                    
-                    {/* Distribution changes */}
-                    {change.employeeName && change.oldDistribution !== undefined && change.newDistribution !== undefined && (
-                      `${change.employeeName}: كان ${change.oldDistribution || 'غير محدد'} والآن ${change.newDistribution || 'غير محدد'}`
-                    )}
-                    
-                    {/* Operations/Place of receipt changes */}
-                    {change.employeeName && change.oldPlaceOfReceipt !== undefined && change.newPlaceOfReceipt !== undefined && (
-                      `${change.employeeName}: كان ${change.oldPlaceOfReceipt || 'غير محدد'} والآن ${change.newPlaceOfReceipt || 'غير محدد'}`
-                    )}
-                    
-                    {/* Outsiders reason changes */}
-                    {change.employeeName && change.oldReason !== undefined && change.newReason !== undefined && (
-                      `${change.employeeName}: كان ${change.oldReason || 'غير محدد'} والآن ${change.newReason || 'غير محدد'}`
-                    )}
-                    
-                    {/* Outsiders date changes */}
-                    {change.employeeName && change.oldDate !== undefined && change.newDate !== undefined && (
-                      `${change.employeeName}: تاريخ ${change.field} كان ${change.oldDate || 'غير محدد'} والآن ${change.newDate || 'غير محدد'}`
-                    )}
-                    
-                    {/* Outsiders hasDate changes */}
-                    {change.employeeName && change.oldHasDate !== undefined && change.newHasDate !== undefined && (
-                      `${change.employeeName}: حالة التاريخ تغيرت من ${change.oldHasDate ? 'مفعل' : 'غير مفعل'} إلى ${change.newHasDate ? 'مفعل' : 'غير مفعل'}`
-                    )}
-                    
-                    {/* Replacement reason changes */}
-                    {change.type === 'employee' && change.employeeName && change.oldReason && change.newReason && (
-                      `${change.employeeName}: الأسباب كانت [${Array.isArray(change.oldReason) ? (change.oldReason.length > 0 ? change.oldReason.join(', ') : 'غير محدد') : (change.oldReason || 'غير محدد')}] والآن [${Array.isArray(change.newReason) ? (change.newReason.length > 0 ? change.newReason.join(', ') : 'غير محدد') : (change.newReason || 'غير محدد')}]`
-                    )}
-                    
-                    {/* Replacement date changes */}
-                    {change.type === 'date' && change.column && change.oldDate && change.newDate && (
-                      `${change.column} كان ${change.oldDate || 'غير محدد'} والآن ${change.newDate || 'غير محدد'}`
-                    )}
-                    
-                    {/* Attendance changes */}
-                    {change.employeeName && change.oldAttendance !== undefined && change.newAttendance !== undefined && (
-                      `${change.employeeName}: الحضور تغير من ${change.oldAttendance ? 'حاضر' : 'غائب'} إلى ${change.newAttendance ? 'حاضر' : 'غائب'}`
-                    )}
+                    {change.employeeName && `${change.employeeName}: بياناته تم تغيرها`}
                   </Typography>
                 ))
               ) : (

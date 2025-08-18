@@ -17,9 +17,9 @@ import {
   Close as CloseIcon
 } from '@mui/icons-material';
 import React, { useState, useEffect } from 'react';
-import SystemHeader from '../SystemHeader';
-import ConfirmationModal from '../ConfirmationModal';
-import useUnsavedChanges from '../../../../../hooks/useUnsavedChanges';
+import SystemHeader from '../../Ui/SystemHeader';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
+import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printReplacement from './PrintReplacement';
 
 const Replacement = ({ employees: initialEmployees, onEmployeesChange, onNavigateAway }) => {

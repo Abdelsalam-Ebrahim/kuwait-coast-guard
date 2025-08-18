@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { useEffect } from 'react';
-import SystemHeader from '../SystemHeader';
+import SystemHeader from '../../Ui/SystemHeader';
 
 const Weather = ({ onNavigateAway }) => {
   // Clear any existing navigation handlers when this component mounts

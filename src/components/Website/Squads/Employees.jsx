@@ -1,14 +1,56 @@
-import {
-  Box,
-  Typography,
-} from '@mui/material';
-import EmployeeCard from './EmployeeCard';
+import { Alert, Box, CircularProgress, Container, Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 
-import { employeeData } from "../../../constants/DUMMY_DATA";
+import EmployeeCard from './Ui/EmployeeCard';
+import { getAllCategory } from '../../../util/categoryHttp';
+import { useAuth } from '../../../store/AuthContext';
 
 
 const Employees = ({ squadData }) => {
+  const { token } = useAuth();
+  const { data, isPending, error, isError } = useQuery({
+    queryKey: ["categories"],
+    queryFn: ({ signal }) => getAllCategory(signal, token)
+  });
 
+
+  if (isPending) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "20vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          <Typography variant="h6">حدث خطأ ما</Typography>
+          <Typography variant="body2">{error.message}</Typography>
+        </Alert>
+      </Container>
+    );
+  }
+
+  const categoriesData = [...data?.data] || [];
+
+  if (data) {
+    categoriesData.map((data, index) => {
+      const squadLength = squadData.filter(sq => sq.categoryId === data.id);
+      const squadPresent = squadData.filter(sq => sq.categoryId === data.id && sq.attendance === true);
+      
+      categoriesData[index].total = squadLength.length || 0;
+      categoriesData[index].present = squadPresent.length || 0;
+    });
+  }
 
   return (
     // i dont want to add container but i want to add some padding
@@ -38,7 +80,7 @@ const Employees = ({ squadData }) => {
           }
         }}
       >
-        {employeeData.map((employee) => (
+        {categoriesData.map((employee) => (
           <EmployeeCard key={employee.id} employee={employee} />
         ))}
       </Box>

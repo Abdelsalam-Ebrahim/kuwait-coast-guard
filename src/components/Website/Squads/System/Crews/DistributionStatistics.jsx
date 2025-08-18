@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import EmployeeCard from '../../EmployeeCard';
+import EmployeeCard from '../../Ui/EmployeeCard';
 
 const DistributionStatistics = ({ employees }) => {
   const statistics = employees.length > 0 ? employees[0].statistics : [];

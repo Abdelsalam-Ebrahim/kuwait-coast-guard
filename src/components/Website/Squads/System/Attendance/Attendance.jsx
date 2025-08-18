@@ -1,26 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { 
   Paper, 
-  Typography, 
+  Typography,
   Box,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Checkbox,
   useTheme,
 } from '@mui/material';
-import SystemHeader from '../SystemHeader';
-import ConfirmationModal from '../ConfirmationModal';
-import useUnsavedChanges from '../../../../../hooks/useUnsavedChanges';
+import SystemHeader from '../../Ui/SystemHeader';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
+import useUnsavedChanges from '../../shared/useUnsavedChanges';
 
-import printAudience from './PrintAudience';
+import printAttendance from './PrintAttendance';
+import CustomTableHead from '../../Ui/TableHead';
 
-const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
+const Attendance = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
   const theme = useTheme();
-  
+
+  const tableHeadContent = [
+    { label: 'الحضور', style: { px: 2 } },
+    { label: 'المسمى الوظيفي' },
+    { label: 'الرتبة' },
+    { label: 'الاسم الكامل' },
+    { label: 'الفئة' }
+  ];
+
   const {
     currentData: currentEmployees,
     hasChanges,
@@ -47,7 +55,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
     };
   }, [exposeNavigationHandler, onNavigateAway]);
 
-  // Handle attendance change
+  // Handle attendance change just on updated state not the original state
   const handleAttendanceChange = (index, checked) => {
     if (isShownInArchive) return;
     
@@ -59,23 +67,14 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
     updateData(updatedEmployees);
   };
 
-  // Handle save changes
-  const handleSaveChanges = () => {
-    saveChanges(onEmployeesChange);
-  };
-
-  // Get changes data for preview
+  // Get changes data for preview on confirmation modal
   const getEmployeeChangesData = () => {
     return getChangesData((originalEmployees, currentEmployees) => {
       const changes = [];
       
       currentEmployees.forEach((employee, index) => {
         if (employee.attendance !== originalEmployees[index]?.attendance) {
-          changes.push({
-            employeeName: employee.fullName,
-            oldAttendance: originalEmployees[index]?.attendance,
-            newAttendance: employee.attendance
-          });
+          changes.push({ employeeName: employee.name });
         }
       });
       
@@ -92,8 +91,8 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
             isPrinting={true}
             isSaving={true}
             hasChanges={hasChanges}
-            printFn={() => printAudience('الاولي', employees)}
-            saveFn={handleSaveChanges}
+            printFn={() => printAttendance('الاولي', employees)}
+            saveFn={() => saveChanges(onEmployeesChange)}
             onNavigationAttempt={handleNavigationAttempt}
           />
         )}
@@ -120,84 +119,8 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
             },
           }}
         >
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead>
-              <TableRow 
-                sx={{ 
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  '& .MuiTableCell-head': {
-                    borderBottom: 'none'
-                  }
-                }}
-              >
-                <TableCell
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    textAlign: 'center',
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 70, sm: 80 }
-                  }}
-                >
-                  الحضور
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 100, sm: 120 }
-                  }}
-                >
-                  المسمى الوظيفي
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 80, sm: 100 }
-                  }}
-                >
-                  الرتبة
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 150, sm: 180 }
-                  }}
-                >
-                  الاسم الكامل
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 100, sm: 120 }
-                  }}
-                >
-                  الفئة
-                </TableCell>
-              </TableRow>
-            </TableHead>
+          <Table sx={{ minWidth: 700 }}>
+            <CustomTableHead columnsName={tableHeadContent} />
 
             <TableBody>
               {currentEmployees.map((employee, index) => (
@@ -224,7 +147,6 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                 >
                   <TableCell 
                     sx={{ 
-                      textAlign: 'center',
                       py: { xs: 0.5, sm: 1 },
                       px: { xs: 0.5, sm: 1 },
                       borderBottom: '1px solid rgba(224, 224, 224, 0.5)',
@@ -243,6 +165,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                       }}
                     />
                   </TableCell>
+
                   <TableCell 
                     sx={{ 
                       fontSize: { xs: '0.75rem', sm: '0.9rem' },
@@ -255,6 +178,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                   >
                     {employee.jobTitle}
                   </TableCell>
+                  
                   <TableCell 
                     sx={{ 
                       fontSize: { xs: '0.75rem', sm: '0.9rem' },
@@ -268,7 +192,8 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                   >
                     {employee.rank}
                   </TableCell>
-                  <TableCell 
+
+                  <TableCell
                     sx={{ 
                       fontSize: { xs: '0.8rem', sm: '0.95rem' },
                       fontWeight: 600,
@@ -279,8 +204,9 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                       minWidth: { xs: 150, sm: 180 }
                     }}
                   >
-                    {employee.fullName}
+                    {employee.name}
                   </TableCell>
+
                   <TableCell 
                     sx={{ 
                       py: { xs: 0.5, sm: 1 },
@@ -296,7 +222,7 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
                         fontWeight: 600,
                       }}
                     >
-                      {employee.category}
+                      {employee.categoryName}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -320,4 +246,4 @@ const Audience = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAw
   );
 };
 
-export default Audience;
+export default Attendance;

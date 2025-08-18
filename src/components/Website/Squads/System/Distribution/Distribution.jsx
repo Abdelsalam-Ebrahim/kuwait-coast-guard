@@ -13,13 +13,21 @@ import {
   FormControl,
   useTheme,
 } from '@mui/material';
-import SystemHeader from '../SystemHeader';
-import ConfirmationModal from '../ConfirmationModal';
-import useUnsavedChanges from '../../../../../hooks/useUnsavedChanges';
+import SystemHeader from '../../Ui/SystemHeader';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
+import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printDistribution from './PrintDistribution';
+import CustomTableHead from '../../Ui/TableHead';
 
 const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
   const theme = useTheme();
+
+  const tableHeadContent = [
+    { label: 'الرتبة', style: { px: 3 } },
+    { label: 'المسمى الوظيفي' },
+    { label: 'الاسم' },
+    { label: 'التوزيع', style: { textAlign: 'center' } },
+  ];
   
   const {
     currentData: currentEmployees,
@@ -199,70 +207,8 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
           }}
         >
           <Table sx={{ minWidth: 650 }}>
-            <TableHead>
-              <TableRow 
-                sx={{ 
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  '& .MuiTableCell-head': {
-                    borderBottom: 'none'
-                  }
-                }}
-              >
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 2, sm: 3 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 80, sm: 100 }
-                  }}
-                >
-                  الرتبة
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 100, sm: 120 }
-                  }}
-                >
-                  المسمى الوظيفي
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    minWidth: { xs: 150, sm: 180 }
-                  }}
-                >
-                  الاسم الكامل
-                </TableCell>
-                <TableCell 
-                  sx={{ 
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.8rem', sm: '0.95rem' },
-                    py: { xs: 1, sm: 1.5 },
-                    px: { xs: 0.5, sm: 1 },
-                    letterSpacing: '0.5px',
-                    textAlign: 'center',
-                    minWidth: { xs: 120, sm: 140 }
-                  }}
-                >
-                  التوزيع
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <CustomTableHead columnsName={tableHeadContent} />
+
             <TableBody>
               {currentEmployees.map((employee, index) => (
                 <TableRow 
@@ -322,7 +268,7 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
                       minWidth: { xs: 150, sm: 180 }
                     }}
                   >
-                    {employee.fullName}
+                    {employee.name}
                   </TableCell>
                   <TableCell 
                     sx={{ 

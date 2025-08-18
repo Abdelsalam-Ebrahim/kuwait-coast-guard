@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Box, Container, Typography, Paper } from '@mui/material';
-import SubNavbar from './SubNavbar';
-import Audience from './System/Audience/Audience';
+import SubNavbar from './Ui/SubNavbar';
+import Attendance from './System/Attendance/Attendance';
 import Distribution from './System/Distribution/Distribution';
 import Operations from './System/Operations/Operations';
 import Outsiders from './System/Outsiders/Outsiders';
@@ -25,16 +25,16 @@ import {
 
 const GroupMain = ({ squadData }) => {
   const [activeTab, setActiveTab] = useState('attendance');
-  const [employees, setEmployees] = useState({
-    audience: audienceData,
-    distribution: distributionData,
-    operations: operationsData,
-    outsiders: outsidersData,
-    crews: crewsData,
-    replacement: replacementData,
-    technical: technicalData,
-  });
-  
+  const [employees, setEmployees] = useState(squadData);
+
+
+  const handleEmployeesChange = (type, updatedEmployees) => {
+    setEmployees(prev => ({
+      ...prev,
+      [type]: updatedEmployees
+    }));
+  };
+
   // Ref to store the navigation handler from child components
   const navigationHandlerRef = useRef(null);
 
@@ -59,13 +59,6 @@ const GroupMain = ({ squadData }) => {
     }
   };
 
-  const handleEmployeesChange = (type, updatedEmployees) => {
-    setEmployees(prev => ({
-      ...prev,
-      [type]: updatedEmployees
-    }));
-  };
-
   const handleNavigationHandler = (handler) => {
     navigationHandlerRef.current = handler;
   };
@@ -79,10 +72,10 @@ const GroupMain = ({ squadData }) => {
     switch (activeTab) {
       case 'attendance':
         return (
-          <Audience 
-            employees={employees.audience} 
+          <Attendance 
+            employees={employees} 
             isShownInArchive={false}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('audience', updatedEmployees)}
+            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('attendance', updatedEmployees)}
             onNavigateAway={handleNavigationHandler}
           />
         );
@@ -90,7 +83,7 @@ const GroupMain = ({ squadData }) => {
       case 'distribution':
         return (
           <Distribution 
-            employees={employees.distribution} 
+            employees={employees} 
             isShownInArchive={false}
             onEmployeesChange={(updatedEmployees) => handleEmployeesChange('distribution', updatedEmployees)}
             onNavigateAway={handleNavigationHandler}
@@ -100,7 +93,7 @@ const GroupMain = ({ squadData }) => {
       case 'operations':
         return (
           <Operations 
-            employees={employees.operations} 
+            employees={employees} 
             isShownInArchive={false}
             onEmployeesChange={(updatedEmployees) => handleEmployeesChange('operations', updatedEmployees)}
             onNavigateAway={handleNavigationHandler}
@@ -110,7 +103,7 @@ const GroupMain = ({ squadData }) => {
       case 'outsiders':
         return (
           <Outsiders 
-            employees={employees.outsiders} 
+            employees={employees} 
             isShownInArchive={false}
             onEmployeesChange={(updatedEmployees) => handleEmployeesChange('outsiders', updatedEmployees)}
             onNavigateAway={handleNavigationHandler}
@@ -118,7 +111,7 @@ const GroupMain = ({ squadData }) => {
         );
 
       case 'crews':
-        return <Crews employees={employees.crews} onNavigateAway={clearNavigationHandler} />;
+        return <Crews employees={employees} onNavigateAway={clearNavigationHandler} />;
 
       case 'archive':
         return <Archives employees={archiveData} onNavigateAway={clearNavigationHandler} />;

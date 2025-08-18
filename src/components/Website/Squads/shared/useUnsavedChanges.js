@@ -1,11 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-/**
- * Custom hook to handle unsaved changes detection and confirmation modal
- * @param {any} initialData - The initial data to track changes against
- * @param {boolean} enabled - Whether to enable unsaved changes detection
- * @returns {object} - Object containing state and handlers for unsaved changes
- */
+
 const useUnsavedChanges = (initialData = null, enabled = true) => {
   const [currentData, setCurrentData] = useState(initialData);
   const [hasChanges, setHasChanges] = useState(false);

@@ -1,6 +1,6 @@
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
-import printAudienceContent from './System/Audience/PrintAudience';
+import printAttendance from './System/Attendance/PrintAttendance';
 import printDistributionContent from './System/Distribution/PrintDistribution';
 import printOperationsContent from './System/Operations/PrintOperations';
 import printCrewsContent from './System/Crews/PrintCrews';
@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 
 const Printing = ({ squadData }) => {
-  console.log("squadData", squadData);
+  // console.log("squadData", squadData);
 
   const printingOptions = [
     { id: 'audience', title: 'طباعة الحضور', enabled: true },
@@ -29,7 +29,7 @@ const Printing = ({ squadData }) => {
     }
     
     if (option.id === 'audience') {
-      printAudienceContent(squadData);
+      printAttendance(squadData);
     } else if (option.id === 'distribution') {
       printDistributionContent(squadData);
     } else if (option.id === 'operations') {
