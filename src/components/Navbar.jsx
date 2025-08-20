@@ -23,6 +23,9 @@ import { ColorModeContext } from '../theme/ThemeProvider.jsx';
 import { colors } from '../constants/colors.js';
 import whiteLogo from "../assets/logo-white.png";
 import { useAuth } from '../store/AuthContext.jsx';
+import { useMutation } from '@tanstack/react-query';
+import { logout as logoutHttpFn } from "../util/authHttp.js";
+import toast from 'react-hot-toast';
 
 
 const Navbar = ({ userName = 'مستخدم', onLogout }) => {
@@ -30,12 +33,18 @@ const Navbar = ({ userName = 'مستخدم', onLogout }) => {
   const navigate = useNavigate();
   const [menuAnchor, setMenuAnchor] = useState(null);
 
-  const { logout } = useAuth();
+  const { logout, token } = useAuth();
 
-  const handleLogout = () => {
-    onLogout();
-    logout();
-  };
+  const { mutate } = useMutation({
+    mutationFn: () => logoutHttpFn(token),
+    onSuccess: () => {
+      logout();
+      toast.success("تم تسجيل الخروج بنجاح");
+    },
+    onError: (error) => {
+      toast.error("فشل تسجيل الخروج. يرجى المحاولة مرة أخرى.");
+    }
+  })
 
   const openMenu = (e) => setMenuAnchor(e.currentTarget);
   const closeMenu = () => setMenuAnchor(null);
@@ -149,7 +158,7 @@ const Navbar = ({ userName = 'مستخدم', onLogout }) => {
                 {mode === 'dark' ? <FiSun /> : <FiMoon />}
               </IconButton>
 
-              <Button onClick={handleLogout} color="inherit" startIcon={<LogoutIcon />}>تسجيل الخروج</Button>
+              <Button onClick={mutate} color="inherit" startIcon={<LogoutIcon />}>تسجيل الخروج</Button>
             </Box>
 
             {/* Mobile: user name + menu button */}
@@ -223,7 +232,7 @@ const Navbar = ({ userName = 'مستخدم', onLogout }) => {
                   </Box>
                 </MenuItem>
 
-                <MenuItem onClick={() => { handleLogout(); closeMenu(); }}>
+                <MenuItem onClick={() => { mutate(); closeMenu(); }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <LogoutIcon fontSize="small" />
                     تسجيل الخروج

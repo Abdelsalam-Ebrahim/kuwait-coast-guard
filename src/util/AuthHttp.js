@@ -5,11 +5,11 @@ const api = `${baseUrl}/Auth`;
 
 
 // login
-export async function login(userData, signal) {
+export async function login(userData) {
   const url = `${api}/login`;
 
   try {
-    const response = await axios.post(url, userData, { signal });
+    const response = await axios.post(url, userData);
 
     localStorage.setItem('authToken', 'dummy-token');
     localStorage.setItem('adminToken', 'dummy-token');
@@ -26,11 +26,11 @@ export async function login(userData, signal) {
 }
 
 // create account
-export async function register(userData, signal, token) {
+export async function register(userData, token) {
   const url = `${api}/register`;
 
   try {
-    const response = await axios.post(url, userData, { signal, headers: { Authorization: `Bearer ${token}` } });
+    const response = await axios.post(url, userData, { headers: { Authorization: `Bearer ${token}` } });
 
     return response.data;
   } catch (error) {
@@ -40,5 +40,23 @@ export async function register(userData, signal, token) {
       throw err;
     }
     throw new Error('فشل في إنشاء الحساب, برجاء المحاولة مرة أخرى او لاحقا');
+  }
+}
+
+// logout
+export async function logout(token) {
+  const url = `${api}/logout`;
+
+  try {
+    const response = await axios.post(url, {}, { headers: { Authorization: `Bearer ${token}` } });
+
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      const err = new Error("غير مصرح, برجاء تسجيل الدخول");
+      err.status = 401;
+      throw err;
+    }
+    throw new Error('فشل في تسجيل الخروج, برجاء المحاولة مرة أخرى لاحقا');
   }
 }

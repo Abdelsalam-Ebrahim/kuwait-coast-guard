@@ -8,6 +8,7 @@ import InputText from '../../Ui/InputText';
 import InputSelection from '../../Ui/InputSelection';
 import { getAllSquads } from "../../../../util/squadHttp";
 import { getAllCategory } from '../../../../util/categoryHttp';
+import { useAuth } from '../../../../store/AuthContext';
 
 const UserFormBase = ({ 
   formData, 
@@ -18,6 +19,11 @@ const UserFormBase = ({
   submitButtonText,
   selectedEmployee = null
 }) => {
+
+  const { token } = useAuth();
+
+  console.log("token: ", token);
+
   const { 
     data: squadData, 
     isPending: squadIsPending,
@@ -25,7 +31,7 @@ const UserFormBase = ({
     isError: squadIsError
   } = useQuery({
     queryKey: ["squads"],
-    queryFn: ({ signal }) => getAllSquads(signal),
+    queryFn: ({ signal }) => getAllSquads(signal, token),
   });
 
   const {
@@ -35,7 +41,7 @@ const UserFormBase = ({
     isError: categoryIsError 
   } = useQuery({
     queryKey: ["categories"],
-    queryFn: ({ signal }) => getAllCategory(signal),
+    queryFn: ({ signal }) => getAllCategory(signal, token),
   });
 
   const handleSubmit = () => {
