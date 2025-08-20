@@ -6,6 +6,7 @@ import printOperationsContent from './System/Operations/PrintOperations';
 import printCrewsContent from './System/Crews/PrintCrews';
 import printOutsidersContent from './System/Outsiders/PrintOutsiders';
 import toast from 'react-hot-toast';
+import printArchives from './System/Archives/PrintArchives';
 
 
 const Printing = ({ squadData }) => {
@@ -15,8 +16,8 @@ const Printing = ({ squadData }) => {
     { id: 'audience', title: 'طباعة الحضور', enabled: true },
     { id: 'distribution', title: 'طباعة التوزيع', enabled: true },
     { id: 'operations', title: 'طباعة العمليات', enabled: true },
-    { id: 'crews', title: 'طباعة الطواقم', enabled: true },
-    { id: 'outsiders', title: 'طباعة الخوارج', enabled: true }
+    { id: 'outsiders', title: 'طباعة الخوارج', enabled: true },
+    { id: 'crews', title: 'طباعة الارشيف', enabled: true },
   ];
 
 
@@ -34,10 +35,10 @@ const Printing = ({ squadData }) => {
       printDistributionContent(squadData);
     } else if (option.id === 'operations') {
       printOperationsContent(squadData);
-    } else if (option.id === 'crews') {
-      printCrewsContent(squadData);
     } else if (option.id === 'outsiders') {
       printOutsidersContent(squadData);
+    } else if (option.id === 'crews') {
+      printArchives(squadData);
     }
   };
 

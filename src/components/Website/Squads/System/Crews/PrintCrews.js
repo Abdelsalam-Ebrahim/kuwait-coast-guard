@@ -1,11 +1,7 @@
 // Utility functions for printing components
 
-const printCrewsContent = (groupNumber = 'الأولى', crewsData = {}) => {
-  const tableHeaders = [
-    'الرتبة',
-    'المسمي',
-    'الاسم',
-  ];
+const printCrewsContent = (distributions, groupNumber) => {
+  const tableHeaders = ['الرتبة', 'المسمي', 'الاسم'];
 
   // Get current date and time in Arabic
   const now = new Date();
@@ -35,9 +31,10 @@ const printCrewsContent = (groupNumber = 'الأولى', crewsData = {}) => {
 
   // Generate tables for each distribution
   const generateTables = () => {
-    return Object.entries(crewsData).map(([distributionName, employees]) => `
+    console.log("distributions: ", distributions);
+    return distributions.map((distribution) => `
       <div class="table-container">
-        <h4 class="table-title">${distributionName}</h4>
+        <h4 class="table-title">${distribution.distributionPlaceName}</h4>
         <table>
           <thead>
             <tr>
@@ -45,7 +42,7 @@ const printCrewsContent = (groupNumber = 'الأولى', crewsData = {}) => {
             </tr>
           </thead>
           <tbody>
-            ${employees.map((employee, index) => `
+            ${distribution.people.map((employee, index) => `
               <tr${index % 2 === 1 ? ' style="background-color: #fafafa;"' : ''}>
                 <td>${employee.rank}</td>
                 <td>${employee.jobTitle}</td>
@@ -198,7 +195,7 @@ const printCrewsContent = (groupNumber = 'الأولى', crewsData = {}) => {
       <div class="print-container">
         <div class="header">
           <h1>خفر السواحل - القطاع الأوسط</h1>
-          <h2>السرية ${groupNumber}</h2>
+          <h2>${groupNumber}</h2>
           <h3>كشف الطواقم</h3>
           <div class="date">
             <p>${currentDate}</p>

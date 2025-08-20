@@ -14,13 +14,13 @@ const specificDistribution = [
 ]
 
 const Crews = ({ employees, isNav, onNavFreely }) => {
+  const squadName = employees[0]?.squadName || "السرية الاولي";
 
   useEffect(() => {
     if(isNav) {
       onNavFreely(true);
     }
   }, [isNav]);
-
 
   const distributions = useMemo(() => {
     const grouped = employees.reduce((acc, emp) => {
@@ -69,9 +69,9 @@ const Crews = ({ employees, isNav, onNavFreely }) => {
     }));
   }, [employees]);
 
-
   console.log("distributions: ", distributions);
-  
+
+
   return (
     <Box sx={{ py: 3 }}>
       <Paper elevation={1} sx={{ p: { xs: 1.5, sm: 2, md: 3 }, borderRadius: 2 }}>
@@ -79,7 +79,7 @@ const Crews = ({ employees, isNav, onNavFreely }) => {
           title={"إدارة الطواقم"}
           isPrinting={true}
           isSaving={false}
-          printFn={() => printCrews('الاولي', employees)}
+          printFn={() => printCrews(distributions, squadName)}
         />
 
         <Box
