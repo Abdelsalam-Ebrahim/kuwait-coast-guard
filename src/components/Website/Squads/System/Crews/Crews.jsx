@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { 
   Paper, 
   Box,
@@ -6,156 +5,72 @@ import {
 import DistributionTables from './DistributionTables';
 import SystemHeader from '../../Ui/SystemHeader';
 import printCrews from './PrintCrews';
+import { useEffect, useMemo } from 'react';
 
-const Crews = ({ employees, onNavigateAway }) => {
-  // Clear any existing navigation handlers when this component mounts
+
+const specificDistribution = [
+  "893e4990-0bfc-4099-8a0f-0417019f4893", // R41
+  "68dd8b1e-94f9-4b38-bd74-168db2c6cb9a", // 706
+]
+
+const Crews = ({ employees, isNav, onNavFreely }) => {
+
   useEffect(() => {
-    if (onNavigateAway) {
-      onNavigateAway(null);
+    if(isNav) {
+      onNavFreely(true);
     }
-  }, [onNavigateAway]);
+  }, [isNav]);
 
-  const firstDistribution = [
-    {
-      name: "أحمد محمد",
-      jobTitle: "قائد زورق",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 25, present: 20, missing: 5 },
-        { title: "نواخذه", total: 15, present: 12, missing: 3 },
-        { title: "بحرية", total: 40, present: 35, missing: 5 },
-        { title: "مدني فني", total: 5, present: 4, missing: 1 },
-        { title: "مهني فني", total: 18, present: 15, missing: 3 },
-        { title: "مهني طباخ", total: 10, present: 8, missing: 2 },
-        { title: "الجيش البنغالي فني", total: 12, present: 9, missing: 3 },
-        { title: "الجيش البنغالي طباخ", total: 3, present: 2, missing: 1 },
-      ]
-    },
-    {
-      name: "محمد علي",
-      jobTitle: "نوخذه",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 22, present: 18, missing: 4 },
-        { title: "نواخذه", total: 14, present: 11, missing: 3 },
-        { title: "بحرية", total: 38, present: 38, missing: 0 },
-        { title: "مدني فني", total: 4, present: 3, missing: 1 },
-        { title: "مهني فني", total: 16, present: 14, missing: 2 },
-        { title: "مهني طباخ", total: 8, present: 7, missing: 1 },
-        { title: "الجيش البنغالي فني", total: 10, present: 8, missing: 2 },
-        { title: "الجيش البنغالي طباخ", total: 2, present: 1, missing: 1 },
-      ]
-    }
-  ];
 
-  // بيانات التوزيع الثاني
-  const secondDistribution = [
-    {
-      name: "سعيد حسن",
-      jobTitle: "بحار",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 28, present: 24, missing: 4 },
-        { title: "نواخذه", total: 17, present: 14, missing: 3 },
-        { title: "بحرية", total: 45, present: 44, missing: 1 },
-        { title: "مدني فني", total: 6, present: 5, missing: 1 },
-        { title: "مهني فني", total: 20, present: 17, missing: 3 },
-        { title: "مهني طباخ", total: 12, present: 9, missing: 3 },
-        { title: "الجيش البنغالي فني", total: 15, present: 12, missing: 3 },
-        { title: "الجيش البنغالي طباخ", total: 4, present: 3, missing: 1 },
-      ]
-    },
-    {
-      name: "جمال فهد",
-      jobTitle: "كهرباء",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 26, present: 23, missing: 3 },
-        { title: "نواخذه", total: 16, present: 12, missing: 4 },
-        { title: "بحرية", total: 42, present: 40, missing: 2 },
-        { title: "مدني فني", total: 4, present: 4, missing: 0 },
-        { title: "مهني فني", total: 15, present: 14, missing: 1 },
-        { title: "مهني طباخ", total: 10, present: 9, missing: 1 },
-        { title: "الجيش البنغالي فني", total: 12, present: 10, missing: 2 },
-        { title: "الجيش البنغالي طباخ", total: 3, present: 3, missing: 0 },
-      ]
-    }
-  ];
+  const distributions = useMemo(() => {
+    const grouped = employees.reduce((acc, emp) => {
+      const placeKey = emp.distributionPlaceId || "no-distribution";
 
-  // بيانات التوزيع الثالث
-  const thirdDistribution = [
-    {
-      name: "خالد عبدالعزيز",
-      jobTitle: "طباخ",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 20, present: 18, missing: 2 },
-        { title: "نواخذه", total: 10, present: 9, missing: 1 },
-        { title: "بحرية", total: 35, present: 33, missing: 2 },
-        { title: "مدني فني", total: 2, present: 2, missing: 0 },
-        { title: "مهني فني", total: 8, present: 7, missing: 1 },
-        { title: "مهني طباخ", total: 15, present: 12, missing: 3 },
-        { title: "الجيش البنغالي فني", total: 9, present: 8, missing: 1 },
-        { title: "الجيش البنغالي طباخ", total: 2, present: 2, missing: 0 },
-      ]
-    },
-    {
-      name: "ناصر يوسف",
-      jobTitle: "ميكانيك",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 19, present: 17, missing: 2 },
-        { title: "نواخذه", total: 9, present: 8, missing: 1 },
-        { title: "بحرية", total: 30, present: 30, missing: 0 },
-        { title: "مدني فني", total: 3, present: 3, missing: 0 },
-        { title: "مهني فني", total: 7, present: 7, missing: 0 },
-        { title: "مهني طباخ", total: 14, present: 12, missing: 2 },
-        { title: "الجيش البنغالي فني", total: 10, present: 9, missing: 1 },
-        { title: "الجيش البنغالي طباخ", total: 1, present: 1, missing: 0 },
-      ]
-    }
-  ];
+      // Initialize distribution place if not exists
+      if (!acc[placeKey]) {
+        acc[placeKey] = {
+          distributionPlaceId: emp.distributionPlaceId,
+          distributionPlaceName: emp.distributionPlaceName || "بدون توزيع",
+          people: [],
+          statistics: {} // temporary object
+        };
+      }
 
-  // بيانات التوزيع الرابع
-  const fourthDistribution = [
-    {
-      name: "علي محمد علي",
-      jobTitle: "قائد زورق",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 30, present: 25, missing: 5 },
-        { title: "نواخذه", total: 20, present: 10, missing: 10 },
-        { title: "بحرية", total: 30, present: 30, missing: 0 },
-        { title: "مدني فني", total: 3, present: 2, missing: 1 },
-        { title: "مهني فني", total: 12, present: 5, missing: 7 },
-        { title: "مهني طباخ", total: 26, present: 12, missing: 14 },
-        { title: "الجيس البنغالي فني", total: 23, present: 11, missing: 12 },
-        { title: "الجيش البنغالي طباخ", total: 2, present: 0, missing: 2 },
-      ]
-    },
-    {
-      name: "فهد سالم",
-      jobTitle: "نوخذه",
-      rank: "ملازم أول",
-      statistics: [
-        { title: "ضباط", total: 30, present: 25, missing: 5 },
-        { title: "نواخذه", total: 20, present: 10, missing: 10 },
-        { title: "بحرية", total: 30, present: 30, missing: 0 },
-        { title: "مدني فني", total: 3, present: 2, missing: 1 },
-        { title: "مهني فني", total: 12, present: 5, missing: 7 },
-        { title: "مهني طباخ", total: 26, present: 12, missing: 14 },
-        { title: "الجيس البنغالي فني", total: 23, present: 11, missing: 12 },
-        { title: "الجيش البنغالي طباخ", total: 2, present: 0, missing: 2 },
-      ]
-    }
-  ];
+      // push person
+      acc[placeKey].people.push(emp);
 
-  const distributions = [
-    { title: "التوزيع الأول", data: firstDistribution },
-    { title: "التوزيع الثاني", data: secondDistribution },
-    { title: "التوزيع الثالث", data: thirdDistribution },
-    { title: "التوزيع الرابع", data: fourthDistribution },
-  ];
+      // group by category
+      const catKey = emp.categoryName || "غير محدد";
+      if (!acc[placeKey].statistics[catKey]) {
+        acc[placeKey].statistics[catKey] = {
+          name: catKey,
+          total: 0,
+          present: 0,
+          absence: 0
+        };
+      }
+
+      acc[placeKey].statistics[catKey].total += 1;
+      if (emp.attendance) {
+        acc[placeKey].statistics[catKey].present += 1;
+      } else {
+        acc[placeKey].statistics[catKey].absence += 1;
+      }
+
+      return acc;
+    }, {});
+
+    // convert statistics from object → array
+    return Object.values(grouped).map(place => ({
+      ...place,
+      statistics: specificDistribution.includes(place.distributionPlaceId)
+        ? Object.values(place.statistics) // keep real stats
+        : [] // reset to empty if not in specificDistribution
+    }));
+  }, [employees]);
+
+
+  console.log("distributions: ", distributions);
   
   return (
     <Box sx={{ py: 3 }}>
@@ -176,7 +91,7 @@ const Crews = ({ employees, onNavigateAway }) => {
         >
           {distributions.map((distribution, i) => (
             <Box key={i}>
-              <DistributionTables distribution={distribution} index={i} />
+              <DistributionTables distribution={distribution} />
             </Box>
           ))}
         </Box>

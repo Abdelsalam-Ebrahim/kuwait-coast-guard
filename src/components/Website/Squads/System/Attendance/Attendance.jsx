@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Paper, 
   Typography,
@@ -12,75 +12,77 @@ import {
   useTheme,
 } from '@mui/material';
 import SystemHeader from '../../Ui/SystemHeader';
-import ConfirmationModal from '../../Ui/ConfirmationModal';
-import useUnsavedChanges from '../../shared/useUnsavedChanges';
 
 import printAttendance from './PrintAttendance';
 import CustomTableHead from '../../Ui/TableHead';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 
-const Attendance = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
+
+const tableHeadContent = [
+  { label: 'الحضور', style: { px: 2 } },
+  { label: 'المسمى الوظيفي' },
+  { label: 'الرتبة' },
+  { label: 'الاسم الكامل' },
+  { label: 'الفئة' }
+];
+
+const Attendance = ({ employees, isShownInArchive, onSave, isNav, onNavFreely, isUpdating }) => {
   const theme = useTheme();
 
-  const tableHeadContent = [
-    { label: 'الحضور', style: { px: 2 } },
-    { label: 'المسمى الوظيفي' },
-    { label: 'الرتبة' },
-    { label: 'الاسم الكامل' },
-    { label: 'الفئة' }
-  ];
+  const [showModal, setShowModal] = useState(false);
+  const [updatedEmployees, setUpdatedEmployees] = useState({ data: [], isChanged: false });
 
-  const {
-    currentData: currentEmployees,
-    hasChanges,
-    showConfirmationModal,
-    updateData,
-    saveChanges,
-    handleNavigationAttempt,
-    handleConfirmSave,
-    handleConfirmDiscard,
-    handleConfirmCancel,
-    getChangesData,
-    exposeNavigationHandler
-  } = useUnsavedChanges(employees);
 
-  // Expose navigation check to parent component
   useEffect(() => {
-    exposeNavigationHandler(onNavigateAway);
-    
-    // Cleanup function to clear navigation handler when component unmounts
-    return () => {
-      if (onNavigateAway) {
-        onNavigateAway(null);
+    setUpdatedEmployees({ data: structuredClone(employees), isChanged: false });
+  }, [employees]);
+
+  useEffect(() => {
+    if(isNav) {
+      if(updatedEmployees.isChanged) {
+        setShowModal(true);
+      } else {
+        onNavFreely(true);
       }
-    };
-  }, [exposeNavigationHandler, onNavigateAway]);
+    }
+  }, [isNav]);
 
-  // Handle attendance change just on updated state not the original state
-  const handleAttendanceChange = (index, checked) => {
-    if (isShownInArchive) return;
-    
-    const updatedEmployees = [...currentEmployees];
-    updatedEmployees[index] = {
-      ...updatedEmployees[index],
-      attendance: checked
-    };
-    updateData(updatedEmployees);
-  };
 
-  // Get changes data for preview on confirmation modal
-  const getEmployeeChangesData = () => {
-    return getChangesData((originalEmployees, currentEmployees) => {
-      const changes = [];
-      
-      currentEmployees.forEach((employee, index) => {
-        if (employee.attendance !== originalEmployees[index]?.attendance) {
-          changes.push({ employeeName: employee.name });
-        }
-      });
-      
-      return changes;
+  function onUpdateEmployees(index, value) {
+    setUpdatedEmployees((prev) => {
+      const newEmployees = { ...prev };
+      newEmployees.data = [...newEmployees.data]; // clone array
+      newEmployees.data[index] = { ...newEmployees.data[index], 'attendance': value };
+
+      // compare whole array with original employees
+      const isChanged = newEmployees.data.some((emp, i) => emp['attendance'] !== employees[i]['attendance']);
+
+      newEmployees.isChanged = isChanged;
+      return newEmployees;
     });
-  };
+  }
+
+  function handleCancelChanges() {
+    setUpdatedEmployees({ data: structuredClone(employees), isChanged: false });
+    setShowModal(false);
+    onNavFreely(true);
+  }
+
+  function handleClosingModal() {
+    setShowModal(false);
+    onNavFreely(false);
+  }
+
+  async function handleOnSubmit() {
+    const isChanged = await onSave(updatedEmployees.data);
+    setShowModal(false);
+
+    if(isChanged) {
+      setUpdatedEmployees((prev) => ({ ...prev, isChanged: false }));
+    } else {
+      setUpdatedEmployees({ data: structuredClone(employees), isChanged: false });
+    }
+  }
 
   return (
     <Box sx={{ py: 3 }}>
@@ -90,10 +92,9 @@ const Attendance = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
             title="إدارة الحضور"
             isPrinting={true}
             isSaving={true}
-            hasChanges={hasChanges}
-            printFn={() => printAttendance('الاولي', employees)}
-            saveFn={() => saveChanges(onEmployeesChange)}
-            onNavigationAttempt={handleNavigationAttempt}
+            hasChanges={updatedEmployees.isChanged}
+            printFn={() => printAttendance('الاولي', updatedEmployees.data)}
+            saveFn={() => setShowModal(true)}
           />
         )}
 
@@ -123,7 +124,7 @@ const Attendance = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
             <CustomTableHead columnsName={tableHeadContent} />
 
             <TableBody>
-              {currentEmployees.map((employee, index) => (
+              {updatedEmployees.data.map((employee, index) => (
                 <TableRow
                   key={index}
                   sx={{
@@ -156,7 +157,7 @@ const Attendance = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
                     <Checkbox 
                       disabled={isShownInArchive}
                       checked={employee.attendance}
-                      onChange={(e) => handleAttendanceChange(index, e.target.checked)}
+                      onChange={(e) => onUpdateEmployees(index, e.target.checked)}
                       color="primary"
                       sx={{
                         '& .MuiSvgIcon-root': {
@@ -233,14 +234,13 @@ const Attendance = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
       </Paper>
 
       <ConfirmationModal
-        open={showConfirmationModal}
-        onClose={handleConfirmCancel}
-        onSave={() => handleConfirmSave(onEmployeesChange)}
-        onCancel={handleConfirmDiscard}
-        title="تغييرات غير محفوظة في الحضور"
-        message="لديك تغييرات غير محفوظة في حضور الموظفين. هل تريد حفظ التغييرات قبل المغادرة؟"
-        changesData={getEmployeeChangesData()}
+        open={showModal}
+        changesData={[]}
         showChangesPreview={true}
+        onClose={handleClosingModal}
+        onCancel={handleCancelChanges}
+        onSave={handleOnSubmit}
+        isLoading={isUpdating}
       />
     </Box>
   );

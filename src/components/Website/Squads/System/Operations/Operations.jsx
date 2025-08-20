@@ -6,113 +6,142 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Select,
   MenuItem,
   FormControl,
   useTheme,
-  Typography
+  Typography,
+  CircularProgress,
+  Container,
+  Alert
 } from '@mui/material';
 import SystemHeader from '../../Ui/SystemHeader';
 import ConfirmationModal from '../../Ui/ConfirmationModal';
-import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printOperations from './PrintOperations';
 import CustomTableHead from '../../Ui/TableHead';
+import { getAllReceivingPlaces } from '../../../../../util/receivingPlaceHttp';
+import { getDistributionEmployeesBySquad } from '../../../../../util/employeeHttp';
+import { useAuth } from '../../../../../store/AuthContext';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
-const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
+
+const tableHeadContent = [
+  { label: 'الرتبة', style: { px: 3 } },
+  { label: 'المسمى الوظيفي' },
+  { label: 'الاسم' },
+  { label: 'التوزيع' },
+  { label: 'مكان الاستلام' },
+  { label: 'الهاتف', style: { textAlign: 'center' } },
+];
+
+const Operations = ({ isShownInArchive, onSave, isNav, onNavFreely, isUpdating }) => {
   const theme = useTheme();
+  const { token } = useAuth();
+  const { id } = useParams();
 
-  const tableHeadContent = [
-    { label: 'الرتبة', style: { px: 3 } },
-    { label: 'المسمى الوظيفي' },
-    { label: 'الاسم' },
-    { label: 'التوزيع' },
-    { label: 'مكان الاستلام' },
-    { label: 'الهاتف', style: { textAlign: 'center' } },
-  ];
-  
+  const [showModal, setShowModal] = useState(false);
+  const [updatedEmployees, setUpdatedEmployees] = useState({ data: [], isChanged: false });
 
   const {
-    currentData: currentEmployees,
-    hasChanges,
-    showConfirmationModal,
-    updateData,
-    saveChanges,
-    handleNavigationAttempt,
-    handleConfirmSave,
-    handleConfirmDiscard,
-    handleConfirmCancel,
-    getChangesData,
-    exposeNavigationHandler
-  } = useUnsavedChanges(employees);
+    data: receivingPlaces,
+    isPending: isPendingReceiving,
+    error: errorReceiving,
+    isError: isErrorReceiving
+  } = useQuery({
+    queryKey: ['receivingPlaces'],
+    queryFn: ({ signal }) => getAllReceivingPlaces(signal, token),
+  });
 
-  // Expose navigation check to parent component
+  const {
+    data: distributedEmployees,
+    isPending: isPendingDistributed,
+    error: errorDistributed,
+    isError: isErrorDistributed
+  } = useQuery({
+    queryKey: ['distributedEmployees', id],
+    queryFn: ({ signal }) => getDistributionEmployeesBySquad(signal, id, token)
+  });
+
   useEffect(() => {
-    exposeNavigationHandler(onNavigateAway);
-    
-    // Cleanup function to clear navigation handler when component unmounts
-    return () => {
-      if (onNavigateAway) {
-        onNavigateAway(null);
+    if (!isPendingDistributed && !isErrorDistributed && distributedEmployees?.data) {
+      setUpdatedEmployees({ data: structuredClone(distributedEmployees.data), isChanged: false });
+    }
+  }, [distributedEmployees, isPendingDistributed, isErrorDistributed]);
+
+  useEffect(() => {
+    if(isNav) {
+      if(updatedEmployees.isChanged) {
+        setShowModal(true);
+      } else {
+        onNavFreely(true);
       }
-    };
-  }, [exposeNavigationHandler, onNavigateAway]);
+    }
+  }, [isNav]);
 
-  // Handle receipt location change
-  const handlePlaceOfReceiptChange = (index, newValue) => {
-    if (isShownInArchive) return;
-    
-    const updatedEmployees = [...currentEmployees];
-    updatedEmployees[index] = {
-      ...updatedEmployees[index],
-      receiptLocation: newValue
-    };
-    updateData(updatedEmployees);
-  };
 
-  // Handle save changes
-  const handleSaveChanges = () => {
-    saveChanges(onEmployeesChange);
-  };
+  if (isPendingDistributed) {
+    return (
+      <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "60vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
+  if (isErrorDistributed) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          <Typography variant="h6">حدث خطأ ما</Typography>
+          <Typography variant="body2">{errorDistributed.message}</Typography>
+        </Alert>
+      </Container>
+    );
+  }
 
-  // Get changes data for preview
-  const getEmployeeChangesData = () => {
-    return getChangesData((originalEmployees, currentEmployees) => {
-      const changes = [];
-      
-      currentEmployees.forEach((employee, index) => {
-        if (employee.receiptLocation !== originalEmployees[index]?.receiptLocation) {
-          changes.push({
-            employeeName: employee.fullName,
-            oldReceiptLocation: originalEmployees[index]?.receiptLocation,
-            newReceiptLocation: employee.receiptLocation
-          });
-        }
-      });
-      
-      return changes;
+  function onUpdateEmployees(index, value) {
+    setUpdatedEmployees((prev) => {
+      const newEmployees = { ...prev };
+      newEmployees.data = [...newEmployees.data]; // clone array
+      newEmployees.data[index] = { ...newEmployees.data[index], 'receivingPlaceId': value, };
+
+      // compare whole array with original distributedEmployees
+      const isChanged = newEmployees.data.some((emp, i) => emp['receivingPlaceId'] !== distributedEmployees.data[i]['receivingPlaceId']);
+
+      newEmployees.isChanged = isChanged;
+      return newEmployees;
     });
-  };
+  }
 
-  const placeOfReceiptOptions = [
-    "الزور",
-    "كبر", 
-    "عوهه",
-    "الجابرية",
-    "الاحمدية",
-    "القاعدة",
-    "بين الرصيفين",
-    "الكوت",
-    "مركز الإنقاذ البحري",
-    "قاعدة نواف البحرية",
-    "السيف",
-    "الحيشان",
-    "ميناء عبداللة",
-    "قاروة",
-    "ام المرادم",
-    "الحوض الجاف",
-  ];
+  function handleCancelChanges() {
+    setUpdatedEmployees({ data: structuredClone(distributedEmployees.data), isChanged: false });
+    setShowModal(false);
+    onNavFreely(true);
+  }
+
+  function handleClosingModal() {
+    setShowModal(false);
+    onNavFreely(false);
+  }
+
+  async function handleOnSubmit() {
+    const isChanged = await onSave(updatedEmployees.data);
+    setShowModal(false);
+
+    if(isChanged) {
+      setUpdatedEmployees((prev) => ({ ...prev, isChanged: false }));
+    } else {
+      setUpdatedEmployees({ data: structuredClone(distributedEmployees.data), isChanged: false });
+    }
+  }
 
   return (
     <Box sx={{ py: 3 }}>
@@ -122,10 +151,9 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
             title="إدارة العمليات"
             isPrinting={true}
             isSaving={true}
-            hasChanges={hasChanges}
+            hasChanges={updatedEmployees.isChanged}
             printFn={() => printOperations('الاولي', employees)}
-            saveFn={handleSaveChanges}
-            onNavigationAttempt={handleNavigationAttempt}
+            saveFn={() => setShowModal(true)}
           />
         )}
 
@@ -156,7 +184,7 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
 
 
             <TableBody>
-              {currentEmployees.map((employee, index) => (
+              {updatedEmployees.data.map((employee, index) => (
                 <TableRow
                   key={index} 
                   sx={{
@@ -216,7 +244,7 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
                       minWidth: { xs: 150, sm: 180 }
                     }}
                   >
-                    {employee.fullName}
+                    {employee.name}
                   </TableCell>
 
                   <TableCell 
@@ -240,7 +268,7 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
                         display: 'inline-block'
                       }}
                     >
-                      {employee.distribution}
+                      {employee.distributionPlaceName}
                     </Typography>
                   </TableCell>
 
@@ -255,8 +283,8 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
                     <FormControl size="small" sx={{ minWidth: { xs: 90, sm: 120 } }}>
                       <Select
                         disabled={isShownInArchive}
-                        value={employee.receiptLocation === 'اختر المكان' ? '' : employee.receiptLocation || ''}
-                        onChange={(e) => handlePlaceOfReceiptChange(index, e.target.value)}
+                        value={employee.receivingPlaceId ? employee.receivingPlaceId : ''}
+                        onChange={(e) => onUpdateEmployees(index, e.target.value)}
                         displayEmpty
                         sx={{
                           fontSize: { xs: '0.75rem', sm: '0.85rem' },
@@ -272,19 +300,25 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
                           }
                         }}
                         MenuProps={{ PaperProps: { sx: { maxHeight: 400 }}}}
-                        renderValue={(selected) => {
-                          if (!selected || selected === '') {
-                            return <span style={{ color: '#9e9e9e' }}>اختر المكان</span>;
-                          }
-                          return selected;
-                        }}
                       >
                         <MenuItem value="" disabled sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: 'text.secondary' }}>
                           اختر المكان
                         </MenuItem>
-                        {placeOfReceiptOptions.map((option) => (
-                          <MenuItem key={option} value={option} sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
-                            {option}
+
+                        {isPendingReceiving && <MenuItem disabled>جارٍ التحميل...</MenuItem>}
+
+                        {isErrorReceiving && (
+                          <Box maxWidth="sm" sx={{ mt: 4 }}>
+                            <Alert severity="error">
+                              <Typography variant="h6">حدث خطأ ما</Typography>
+                              <Typography variant="body2">{errorReceiving.message}</Typography>
+                            </Alert>
+                          </Box>
+                        )}
+
+                        {!isPendingReceiving && !isErrorReceiving && receivingPlaces?.data.map((option) => (
+                          <MenuItem key={option.id} value={option.id} sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
+                            {option.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -320,14 +354,13 @@ const Operations = ({ employees, isShownInArchive, onEmployeesChange, onNavigate
       </Paper>
 
       <ConfirmationModal
-        open={showConfirmationModal}
-        onClose={handleConfirmCancel}
-        onSave={() => handleConfirmSave(onEmployeesChange)}
-        onCancel={handleConfirmDiscard}
-        title="تغييرات غير محفوظة في العمليات"
-        message="لديك تغييرات غير محفوظة في مكان استلام الموظفين. هل تريد حفظ التغييرات قبل المغادرة؟"
-        changesData={getEmployeeChangesData()}
+        open={showModal}
+        changesData={[]}
         showChangesPreview={true}
+        onClose={handleClosingModal}
+        onCancel={handleCancelChanges}
+        onSave={handleOnSubmit}
+        isLoading={isUpdating}
       />
     </Box>
   );

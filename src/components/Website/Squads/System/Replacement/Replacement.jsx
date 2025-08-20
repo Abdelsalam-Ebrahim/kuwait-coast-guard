@@ -19,29 +19,16 @@ import {
 import React, { useState, useEffect } from 'react';
 import SystemHeader from '../../Ui/SystemHeader';
 import ConfirmationModal from '../../Ui/ConfirmationModal';
-import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printReplacement from './PrintReplacement';
 
-const Replacement = ({ employees: initialEmployees, onEmployeesChange, onNavigateAway }) => {
+const Replacement = ({ employees: initialEmployees, isNav, onNavFreely }) => {
   // Complex data structure for this component (employees + dates)
   const initialData = {
     employees: initialEmployees || [],
     dates: ['2025-08-10', '2025-08-12', '2025-08-14', '2025-08-16']
   };
 
-  const {
-    currentData,
-    hasChanges,
-    showConfirmationModal,
-    updateData,
-    saveChanges,
-    handleNavigationAttempt,
-    handleConfirmSave,
-    handleConfirmDiscard,
-    handleConfirmCancel,
-    getChangesData,
-    exposeNavigationHandler
-  } = useUnsavedChanges(initialData);
+  const [currentData, setCurrentData] = useState(initialData);
 
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [editFormData, setEditFormData] = useState({});
@@ -54,17 +41,12 @@ const Replacement = ({ employees: initialEmployees, onEmployeesChange, onNavigat
   const employees = currentData?.employees || [];
   const dates = currentData?.dates || ['2025-08-10', '2025-08-12', '2025-08-14', '2025-08-16'];
 
-  // Expose navigation check to parent component
+
   useEffect(() => {
-    exposeNavigationHandler(onNavigateAway);
-    
-    // Cleanup function to clear navigation handler when component unmounts
-    return () => {
-      if (onNavigateAway) {
-        onNavigateAway(null);
-      }
-    };
-  }, [exposeNavigationHandler, onNavigateAway]);
+    if(isNav) {
+      onNavFreely(true);
+    }
+  }, [isNav]);
 
   // Handle save changes
   const handleSaveChanges = () => {
@@ -198,10 +180,10 @@ const Replacement = ({ employees: initialEmployees, onEmployeesChange, onNavigat
           title={"إدارة الاستبدال"}
           isPrinting={true}
           isSaving={true}
-          hasChanges={hasChanges}
+          // hasChanges={hasChanges}
           printFn={() => printReplacement('الاولي', employees, dates)}
-          saveFn={handleSaveChanges}
-          onNavigationAttempt={handleNavigationAttempt}
+          // saveFn={handleSaveChanges}
+          // onNavigationAttempt={handleNavigationAttempt}
         />
 
         <TableContainer 
@@ -353,7 +335,7 @@ const Replacement = ({ employees: initialEmployees, onEmployeesChange, onNavigat
         </TableContainer>
       </Paper>
 
-      <ConfirmationModal
+      {/* <ConfirmationModal
         open={showConfirmationModal}
         onClose={handleConfirmCancel}
         onSave={handleConfirmSave}
@@ -362,7 +344,7 @@ const Replacement = ({ employees: initialEmployees, onEmployeesChange, onNavigat
         message="لديك تغييرات غير محفوظة في بيانات الاستبدال والتواريخ. هل تريد حفظ التغييرات قبل المغادرة؟"
         changesData={getReplacementChangesData()}
         showChangesPreview={true}
-      />
+      /> */}
     </Box>
   );
 };

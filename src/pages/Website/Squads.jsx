@@ -12,21 +12,22 @@ import { AuthContext } from '../../store/AuthContext';
 
 const Squad = () => {
 
-  const { token, logout } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const { id } = useParams();
   const { data, isPending, error, isError } = useQuery({
-    queryKey: ["employees", id],
+    queryKey: ["allEmployees", id],
     queryFn: ({ signal }) => getAllEmployeesBySquad(signal, id, token)
   });
 
+  
   if (isPending) {
     return (
       <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "60vh",
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "60vh",
         }}
       >
         <CircularProgress />
@@ -49,7 +50,7 @@ const Squad = () => {
     <Container maxWidth="lg">
       <Printing squadData={data.data} />
       <Employees squadData={data.data} />
-      <GroupMain squadData={data.data} />
+      <GroupMain employeesData={data.data} />
     </Container>
   );
 }

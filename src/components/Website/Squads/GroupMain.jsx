@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, Container, Typography, Paper } from '@mui/material';
 import SubNavbar from './Ui/SubNavbar';
 import Attendance from './System/Attendance/Attendance';
@@ -11,132 +11,151 @@ import Replacement from './System/Replacement/Replacement';
 import Technical from './System/Technical/Technical';
 import Weather from './System/Weather/Weather';
 
-// Dummy data
-import {
-  audienceData,
-  distributionData,
-  operationsData,
-  outsidersData,
-  crewsData,
-  archiveData,
-  replacementData,
-  technicalData,
-} from "../../../constants/DUMMY_DATA";
+// import react query
+import { useMutation } from '@tanstack/react-query';
+import { queryClient } from "../../../util/constants";
+import { editEmployees } from "../../../util/employeeHttp";
+import { useAuth } from '../../../store/AuthContext';
+import toast from 'react-hot-toast';
 
-const GroupMain = ({ squadData }) => {
+
+const GroupMain = ({ employeesData }) => {
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState('attendance');
-  const [employees, setEmployees] = useState(squadData);
+  const [isPendingNav, setIsPendingNav] = useState();
+  const [isNav, setIsNav] = useState(false);
 
+  const { mutateAsync, isPending } = useMutation({ mutationFn: (updatedData) => editEmployees(updatedData, token) });
 
-  const handleEmployeesChange = (type, updatedEmployees) => {
-    setEmployees(prev => ({
-      ...prev,
-      [type]: updatedEmployees
-    }));
-  };
-
-  // Ref to store the navigation handler from child components
-  const navigationHandlerRef = useRef(null);
-
-  // Clear navigation handler when navigating to components that don't use unsaved changes
-  useEffect(() => {
-    const componentsWithoutUnsavedChanges = ['crews', 'archive', 'weather'];
-    if (componentsWithoutUnsavedChanges.includes(activeTab)) {
-      navigationHandlerRef.current = null;
+  async function handleUpdateAllEmployees(updatedData) {
+    try {
+      await mutateAsync(updatedData);
+      await queryClient.invalidateQueries({ queryKey: ['allEmployees'] });
+      toast.success('تم تعديل بيانات الموظفين بنجاح');
+      
+      return true;
+    } catch (err) {
+      toast.error('فشل تعديل بيانات الموظفين');
+      return false;
+    } finally {
+      if(isPendingNav) {
+        resetIsPendingNav(true);
+      }
     }
-  }, [activeTab]);
-
-  const handleTabChange = (tabId) => {
-    // If there's a navigation handler (from a component with unsaved changes), use it
-    if (navigationHandlerRef.current) {
-      navigationHandlerRef.current(() => {
-        setActiveTab(tabId);
-        // Clear the navigation handler after successful navigation
-        navigationHandlerRef.current = null;
-      });
+  }
+  
+  function resetIsPendingNav(isReset) {
+    if(isReset) {
+      setActiveTab(isPendingNav);
+      setIsPendingNav(null);
+      setIsNav(false);
     } else {
-      setActiveTab(tabId);
+      setIsNav(false);
+      setIsPendingNav(null);
     }
-  };
+  }
 
-  const handleNavigationHandler = (handler) => {
-    navigationHandlerRef.current = handler;
-  };
-
-  // Clear navigation handler when component unmounts or changes
-  const clearNavigationHandler = () => {
-    navigationHandlerRef.current = null;
-  };
+  function handleChangeActiveTab(newTab) {
+    setIsNav(true);
+    setIsPendingNav(newTab);
+  }
 
   const renderContent = () => {
     switch (activeTab) {
       case 'attendance':
         return (
-          <Attendance 
-            employees={employees} 
+          <Attendance
+            employees={employeesData}
             isShownInArchive={false}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('attendance', updatedEmployees)}
-            onNavigateAway={handleNavigationHandler}
+            onSave={handleUpdateAllEmployees}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+            isUpdating={isPending}
           />
         );
       
       case 'distribution':
         return (
-          <Distribution 
-            employees={employees} 
+          <Distribution
             isShownInArchive={false}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('distribution', updatedEmployees)}
-            onNavigateAway={handleNavigationHandler}
+            onSave={handleUpdateAllEmployees}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+            isUpdating={isPending}
           />
         );
 
       case 'operations':
         return (
-          <Operations 
-            employees={employees} 
+          <Operations
             isShownInArchive={false}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('operations', updatedEmployees)}
-            onNavigateAway={handleNavigationHandler}
+            onSave={handleUpdateAllEmployees}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+            isUpdating={isPending}
           />
         );
 
       case 'outsiders':
         return (
-          <Outsiders 
-            employees={employees} 
+          <Outsiders
+            employees={employeesData}
             isShownInArchive={false}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('outsiders', updatedEmployees)}
-            onNavigateAway={handleNavigationHandler}
+            onSave={handleUpdateAllEmployees}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+            isUpdating={isPending}
           />
         );
 
       case 'crews':
-        return <Crews employees={employees} onNavigateAway={clearNavigationHandler} />;
+        return (
+          <Crews
+            employees={employeesData}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+          />
+        );
 
       case 'archive':
-        return <Archives employees={archiveData} onNavigateAway={clearNavigationHandler} />;
+        return (
+          <Archives
+            employees={employeesData}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+          />
+        );
 
       case 'replacement':
         return (
-          <Replacement 
-            employees={employees.replacement || replacementData}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('replacement', updatedEmployees)}
-            onNavigateAway={handleNavigationHandler}
+          <Replacement
+            employees={employeesData}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+            // onUpdateEmployees={handleEmployeesChange}
+            // ensureSaveChanges={() => setShowModal(true)}
           />
         );
 
       case 'technical':
         return (
-          <Technical 
-            employees={employees.technical || technicalData}
-            onEmployeesChange={(updatedEmployees) => handleEmployeesChange('technical', updatedEmployees)}
-            onNavigateAway={handleNavigationHandler}
+          <Technical
+            employees={employeesData}
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+            // onUpdateEmployees={handleEmployeesChange}
+            // ensureSaveChanges={() => setShowModal(true)}
           />
         );
 
       case 'weather':
-        return <Weather onNavigateAway={clearNavigationHandler} />;
-      
+        return (
+          <Weather
+            isNav={isNav}
+            onNavFreely={resetIsPendingNav}
+          />
+        );
+
       default:
         return (
           <Container maxWidth="lg" sx={{ py: 3 }}>
@@ -150,12 +169,12 @@ const GroupMain = ({ squadData }) => {
             </Paper>
           </Container>
         );
-    }
+      }
   };
 
   return (
     <Box>
-      <SubNavbar activeTab={activeTab} onTabChange={handleTabChange} />
+      <SubNavbar activeTab={activeTab} onTabChange={handleChangeActiveTab} />
       <Box sx={{ minHeight: '100vh' }}>
         {renderContent()}
       </Box>

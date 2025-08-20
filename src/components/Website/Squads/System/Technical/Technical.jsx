@@ -16,32 +16,19 @@ import {
   Check as CheckIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SystemHeader from '../../Ui/SystemHeader';
 import ConfirmationModal from '../../Ui/ConfirmationModal';
-import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printTechnical from './printTechnical';
 
-const Technical = ({ employees: initialEmployees, onEmployeesChange, onNavigateAway }) => {
+const Technical = ({ employees: initialEmployees, isNav, onNavFreely }) => {
   // Complex data structure for this component (employees + dates)
   const initialData = {
     employees: initialEmployees || [],
     dates: ['2025-08-10', '2025-08-12', '2025-08-14', '2025-08-16']
   };
 
-  const {
-    currentData,
-    hasChanges,
-    showConfirmationModal,
-    updateData,
-    saveChanges,
-    handleNavigationAttempt,
-    handleConfirmSave,
-    handleConfirmDiscard,
-    handleConfirmCancel,
-    getChangesData,
-    exposeNavigationHandler
-  } = useUnsavedChanges(initialData);
+  const [currentData, setCurrentData] = useState(initialData);
 
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [editFormData, setEditFormData] = useState({});
@@ -54,17 +41,11 @@ const Technical = ({ employees: initialEmployees, onEmployeesChange, onNavigateA
   const employees = currentData?.employees || [];
   const dates = currentData?.dates || ['2025-08-10', '2025-08-12', '2025-08-14', '2025-08-16'];
 
-  // Expose navigation check to parent component
   useEffect(() => {
-    exposeNavigationHandler(onNavigateAway);
-    
-    // Cleanup function to clear navigation handler when component unmounts
-    return () => {
-      if (onNavigateAway) {
-        onNavigateAway(null);
-      }
-    };
-  }, [exposeNavigationHandler, onNavigateAway]);
+    if(isNav) {
+      onNavFreely(true);
+    }
+  }, [isNav]);
 
   // Handle save changes
   const handleSaveChanges = () => {
@@ -198,10 +179,10 @@ const Technical = ({ employees: initialEmployees, onEmployeesChange, onNavigateA
           title={"إدارة الفنية"}
           isPrinting={true}
           isSaving={true}
-          hasChanges={hasChanges}
+          // hasChanges={hasChanges}
           printFn={() => printTechnical('الاولي', employees, dates)}
-          saveFn={handleSaveChanges}
-          onNavigationAttempt={handleNavigationAttempt}
+          // saveFn={handleSaveChanges}
+          // onNavigationAttempt={handleNavigationAttempt}
         />
 
         <TableContainer 
@@ -353,7 +334,7 @@ const Technical = ({ employees: initialEmployees, onEmployeesChange, onNavigateA
         </TableContainer>
       </Paper>
 
-      <ConfirmationModal
+      {/* <ConfirmationModal
         open={showConfirmationModal}
         onClose={handleConfirmCancel}
         onSave={handleConfirmSave}
@@ -362,7 +343,7 @@ const Technical = ({ employees: initialEmployees, onEmployeesChange, onNavigateA
         message="لديك تغييرات غير محفوظة في بيانات الفنية والتواريخ. هل تريد حفظ التغييرات قبل المغادرة؟"
         changesData={getTechnicalChangesData()}
         showChangesPreview={true}
-      />
+      /> */}
     </Box>
   );
 };

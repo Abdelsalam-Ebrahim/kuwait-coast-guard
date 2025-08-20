@@ -8,7 +8,7 @@ import {
 import DistributionStatistics from './DistributionStatistics';
 import DistributionTable from './DistributionTable';
 
-const DistributionTables = ({ distribution, index }) => {
+const DistributionTables = ({ distribution }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -50,11 +50,11 @@ const DistributionTables = ({ distribution, index }) => {
           borderBottomColor: 'primary.main'
         }}
       >
-        {distribution.title}
+        {distribution.distributionPlaceName}
       </Typography>
 
-      <DistributionStatistics employees={distribution.data} />
-      <DistributionTable employees={distribution.data} tableIndex={index} />
+      <DistributionStatistics statistics={distribution.statistics} />
+      <DistributionTable people={distribution.people} />
     </Box>
   );
 };

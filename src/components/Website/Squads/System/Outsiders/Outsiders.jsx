@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 import { 
   Paper, 
   Box,
@@ -6,7 +8,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Select,
   MenuItem,
@@ -14,119 +15,35 @@ import {
   useTheme,
   Checkbox,
   TextField,
-  Typography
+  Typography,
+  CircularProgress,
+  Container,
+  Alert
 } from '@mui/material';
 import SystemHeader from '../../Ui/SystemHeader';
-import ConfirmationModal from '../../Ui/ConfirmationModal';
-import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printOutsiders from './PrintOutsiders';
 import CustomTableHead from '../../Ui/TableHead';
+import { useAuth } from '../../../../../store/AuthContext';
+import { getAllAbsentEmployeesBySquad } from '../../../../../util/employeeHttp';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 
-const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
+
+const tableHeadContent = [
+  { label: 'الرتبة', style: { px: 3 } },
+  { label: 'المسمي' },
+  { label: 'الاسم' },
+  { label: 'السبب' },
+  { style: { textAlign: 'center' }, label: 'التاريخ' },
+  { style: { textAlign: 'center' }, label: 'من - الى' },
+];
+
+const Outsiders = ({ isShownInArchive, onSave, isNav, onNavFreely, isUpdating }) => {
   const theme = useTheme();
+  const { token } = useAuth();
+  const { id } = useParams();
 
-  const tableHeadContent = [
-    { label: 'الرتبة', style: { px: 3 } },
-    { label: 'المسمي' },
-    { label: 'الاسم' },
-    { label: 'السبب' },
-    { style: { textAlign: 'center' }, label: 'التاريخ' },
-    { style: { textAlign: 'center' }, label: 'من - الى' },
-  ];
-
-  const {
-    currentData: currentEmployees,
-    hasChanges,
-    showConfirmationModal,
-    updateData,
-    saveChanges,
-    handleNavigationAttempt,
-    handleConfirmSave,
-    handleConfirmDiscard,
-    handleConfirmCancel,
-    getChangesData,
-    exposeNavigationHandler
-  } = useUnsavedChanges(employees);
-
-  // Expose navigation check to parent component
-  useEffect(() => {
-    exposeNavigationHandler(onNavigateAway);
-    
-    // Cleanup function to clear navigation handler when component unmounts
-    return () => {
-      if (onNavigateAway) {
-        onNavigateAway(null);
-      }
-    };
-  }, [exposeNavigationHandler, onNavigateAway]);
-
-  // Handle reason change
-  const handleReasonChange = (index, newValue) => {
-    if (isShownInArchive) return;
-    
-    const updatedEmployees = [...currentEmployees];
-    updatedEmployees[index] = {
-      ...updatedEmployees[index],
-      reason: newValue
-    };
-    updateData(updatedEmployees);
-  };
-
-  // Handle date checkbox change
-  const handleDateCheckboxChange = (index, checked) => {
-    if (isShownInArchive) return;
-    
-    const updatedEmployees = [...currentEmployees];
-    updatedEmployees[index] = {
-      ...updatedEmployees[index],
-      hasDate: checked,
-      dateFrom: checked ? updatedEmployees[index].dateFrom : "",
-      dateTo: checked ? updatedEmployees[index].dateTo : ""
-    };
-    updateData(updatedEmployees);
-  };
-
-  // Handle date change
-  const handleDateChange = (index, field, value) => {
-    if (isShownInArchive) return;
-    
-    const updatedEmployees = [...currentEmployees];
-    updatedEmployees[index] = {
-      ...updatedEmployees[index],
-      [field]: value
-    };
-    updateData(updatedEmployees);
-  };
-
-  // Handle save changes
-  const handleSaveChanges = () => {
-    saveChanges(onEmployeesChange);
-  };
-
-  // Get changes data for preview
-  const getEmployeeChangesData = () => {
-    return getChangesData((originalEmployees, currentEmployees) => {
-      const changes = [];
-      
-      currentEmployees.forEach((employee, index) => {
-        const original = originalEmployees[index];
-        if (employee.reason !== original?.reason ||
-            employee.hasDate !== original?.hasDate ||
-            employee.dateFrom !== original?.dateFrom ||
-            employee.dateTo !== original?.dateTo) {
-          changes.push({
-            employeeName: employee.fullName,
-            oldReason: original?.reason,
-            newReason: employee.reason,
-            oldDates: original?.hasDate ? `${original?.dateFrom} - ${original?.dateTo}` : 'غير مطلوب',
-            newDates: employee.hasDate ? `${employee.dateFrom} - ${employee.dateTo}` : 'غير مطلوب'
-          });
-        }
-      });
-      
-      return changes;
-    });
-  };
+  const [showModal, setShowModal] = useState(false);
+  const [updatedEmployees, setUpdatedEmployees] = useState({ data: [], isChanged: false });
 
   const reasonOptions = [
     "رخصة",
@@ -145,6 +62,111 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
     "تفرغ رياضي",
     "علاج بالخارج",
   ];
+  const isPendingReason = false;
+  const isErrorReason = false;
+  const errorReason = null;
+
+  // const {
+  //   data: reasonOptions,
+  //   isPending: isPendingReason,
+  //   error: errorReason,
+  //   isError: isErrorReason
+  // } = useQuery({
+  //   queryKey: ['reasonOptions'],
+  //   queryFn: ({ signal }) => getAllReasonOptions(signal, token),
+  // });
+
+  const {
+    data: absentEmployees,
+    isPending: isPendingAbsent,
+    error: errorAbsent,
+    isError: isErrorAbsent
+  } = useQuery({
+    queryKey: ['absentEmployees', id],
+    queryFn: ({ signal }) => getAllAbsentEmployeesBySquad(signal, id, token)
+  });
+
+  useEffect(() => {
+    if (!isPendingAbsent && !isErrorAbsent && absentEmployees?.data) {
+      setUpdatedEmployees({ data: structuredClone(absentEmployees.data), isChanged: false });
+    }
+  }, [absentEmployees, isPendingAbsent, isErrorAbsent]);
+
+  useEffect(() => {
+    if(isNav) {
+      if(updatedEmployees.isChanged) {
+        setShowModal(true);
+      } else {
+        onNavFreely(true);
+      }
+    }
+  }, [isNav]);
+
+
+  if (isPendingAbsent) {
+    return (
+      <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "60vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
+  if (isErrorAbsent) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          <Typography variant="h6">حدث خطأ ما</Typography>
+          <Typography variant="body2">{errorAbsent.message}</Typography>
+        </Alert>
+      </Container>
+    );
+  }
+
+  console.log("absentEmployees: ", absentEmployees.data);
+  console.log("updatedEmployees: ", updatedEmployees.data);
+
+  function onUpdateEmployees(index, type, value) {
+    setUpdatedEmployees((prev) => {
+      const newEmployees = { ...prev };
+      newEmployees.data = [...newEmployees.data]; // clone array
+      newEmployees.data[index] = { ...newEmployees.data[index], [type]: value, };
+
+      // compare whole array with original absentEmployees
+      const isChanged = newEmployees.data.some((emp, i) => emp[type] !== absentEmployees.data[i][type]);
+
+      newEmployees.isChanged = isChanged;
+      return newEmployees;
+    });
+  }
+
+  function handleCancelChanges() {
+    setUpdatedEmployees({ data: structuredClone(absentEmployees.data), isChanged: false });
+    setShowModal(false);
+    onNavFreely(true);
+  }
+
+  function handleClosingModal() {
+    setShowModal(false);
+    onNavFreely(false);
+  }
+
+  async function handleOnSubmit() {
+    const isChanged = await onSave(updatedEmployees.data);
+    setShowModal(false);
+
+    if(isChanged) {
+      setUpdatedEmployees((prev) => ({ ...prev, isChanged: false }));
+    } else {
+      setUpdatedEmployees({ data: structuredClone(absentEmployees.data), isChanged: false });
+    }
+  }
 
   return (
     <Box sx={{ py: 3 }}>
@@ -154,10 +176,9 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
             title={"إدارة الغائبين"}
             isPrinting={true}
             isSaving={true}
-            hasChanges={hasChanges}
+            hasChanges={updatedEmployees.isChanged}
             printFn={() => printOutsiders('الاولي', employees)}
-            saveFn={handleSaveChanges}
-            onNavigationAttempt={handleNavigationAttempt}
+            saveFn={() => setShowModal(true)}
           />
         )}
 
@@ -187,7 +208,7 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
             <CustomTableHead columnsName={tableHeadContent} />
 
             <TableBody>
-              {currentEmployees.map((employee, index) => (
+              {updatedEmployees.data.map((employee, index) => (
                 <TableRow
                   key={index} 
                   sx={{
@@ -247,10 +268,10 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                       minWidth: { xs: 150, sm: 180 }
                     }}
                   >
-                    {employee.fullName}
+                    {employee.name}
                   </TableCell>
 
-                  <TableCell 
+                  {/* <TableCell 
                     sx={{ 
                       py: { xs: 0.5, sm: 1 },
                       px: { xs: 0.5, sm: 1 },
@@ -261,8 +282,8 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                     <FormControl size="small" sx={{ minWidth: { xs: 110, sm: 140 } }}>
                       <Select
                         disabled={isShownInArchive}
-                        value={employee.reason}
-                        onChange={(e) => handleReasonChange(index, e.target.value)}
+                        value={employee.reasonId ? employee.reasonId : ''}
+                        onChange={(e) => onUpdateEmployees(index, 'reasonId', e.target.value)}
                         displayEmpty
                         sx={{
                           fontSize: { xs: '0.75rem', sm: '0.85rem' },
@@ -278,19 +299,25 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                           }
                         }}
                         MenuProps={{ PaperProps: { sx: { maxHeight: 400 }}}}
-                        renderValue={(selected) => {
-                          if (!selected || selected === '') {
-                            return <span style={{ color: '#9e9e9e' }}>اختر التوزيع</span>;
-                          }
-                          return selected;
-                        }}
                       >
                         <MenuItem value="" disabled sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: 'text.secondary' }}>
                           اختر السبب
                         </MenuItem>
-                        {reasonOptions.map((option) => (
-                          <MenuItem key={option} value={option} sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
-                            {option}
+                        
+                        {isPendingReason && <MenuItem disabled>جارٍ التحميل...</MenuItem>}
+                        
+                        {isErrorReason && (
+                          <Box maxWidth="sm" sx={{ mt: 4 }}>
+                            <Alert severity="error">
+                              <Typography variant="h6">حدث خطأ ما</Typography>
+                              <Typography variant="body2">{errorReason.message}</Typography>
+                            </Alert>
+                          </Box>
+                        )}
+
+                        {!isPendingReason && !isErrorReason && reasonOptions?.data.map((option) => (
+                          <MenuItem key={option.id} value={option.id} sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
+                            {option.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -307,9 +334,10 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                     }}
                   >
                     <Checkbox
-                      checked={employee.hasDate}
-                      disabled={employee.reason === null || employee.reason === '' || isShownInArchive}
-                      onChange={(e) => handleDateCheckboxChange(index, e.target.checked)}
+                      checked={employee.checked}
+                      value={employee.checked}
+                      disabled={!employee.reasonId || isShownInArchive}
+                      onChange={(e) => onUpdateEmployees(index, 'dateIsChecked', e.target.checked)}
                       sx={{
                         color: 'primary.main',
                         '&.Mui-checked': {
@@ -328,14 +356,14 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                       minWidth: { xs: 200, sm: 250 }
                     }}
                   >
-                    {employee.hasDate ? (
+                    {employee.checked ? (
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                           disabled={isShownInArchive}
                           type="date"
                           size="small"
-                          value={employee.dateFrom}
-                          onChange={(e) => handleDateChange(index, 'dateFrom', e.target.value)}
+                          value={employee.dateFrom ? employee.dateFrom : ''}
+                          onChange={(e) => onUpdateEmployees(index, 'dateFrom', e.target.value)}
                           sx={{
                             minWidth: { xs: 120, sm: 140 },
                             '& .MuiInputBase-input': {
@@ -355,8 +383,8 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                           disabled={isShownInArchive}
                           type="date"
                           size="small"
-                          value={employee.dateTo}
-                          onChange={(e) => handleDateChange(index, 'dateTo', e.target.value)}
+                          value={employee.dateTo ? employee.dateTo : ''}
+                          onChange={(e) => onUpdateEmployees(index, 'dateTo', e.target.value)}
                           sx={{
                             minWidth: { xs: 120, sm: 140 },
                             '& .MuiInputBase-input': {
@@ -374,7 +402,7 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
                         غير مطلوب
                       </Typography>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
@@ -383,14 +411,13 @@ const Outsiders = ({ employees, isShownInArchive, onEmployeesChange, onNavigateA
       </Paper>
 
       <ConfirmationModal
-        open={showConfirmationModal}
-        onClose={handleConfirmCancel}
-        onSave={() => handleConfirmSave(onEmployeesChange)}
-        onCancel={handleConfirmDiscard}
-        title="تغييرات غير محفوظة في الغائبين"
-        message="لديك تغييرات غير محفوظة في بيانات الموظفين الغائبين. هل تريد حفظ التغييرات قبل المغادرة؟"
-        changesData={getEmployeeChangesData()}
+        open={showModal}
+        changesData={[]}
         showChangesPreview={true}
+        onClose={handleClosingModal}
+        onCancel={handleCancelChanges}
+        onSave={handleOnSubmit}
+        isLoading={isUpdating}
       />
     </Box>
   );

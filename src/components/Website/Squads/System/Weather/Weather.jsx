@@ -2,13 +2,15 @@ import { Box, Paper, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import SystemHeader from '../../Ui/SystemHeader';
 
-const Weather = ({ onNavigateAway }) => {
+const Weather = ({ isNav, onNavFreely }) => {
   // Clear any existing navigation handlers when this component mounts
   useEffect(() => {
-    if (onNavigateAway) {
-      onNavigateAway(null);
+    if(isNav) {
+      onNavFreely(true);
     }
-  }, [onNavigateAway]);
+  }, [isNav]);
+
+
   return (
     <Box sx={{ py: 3 }}>
       <Paper elevation={1} sx={{ p: 3, borderRadius: 2 }}>

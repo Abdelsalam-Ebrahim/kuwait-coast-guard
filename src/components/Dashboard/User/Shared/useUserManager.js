@@ -23,7 +23,7 @@ const useUserManager = (mutationFn, successMessage, errorMessage, mode = 'add') 
   const { mutate, isPending } = useMutation({
     mutationFn: () => mutationFn(formData, token),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      queryClient.invalidateQueries({ queryKey: ['allEmployees'] });
       toast.success(successMessage);
       setFormData(initialFormData);
       if (mode === 'edit') {

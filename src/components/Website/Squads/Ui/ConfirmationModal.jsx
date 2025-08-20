@@ -8,7 +8,8 @@ import {
   Box,
   Alert,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  CircularProgress
 } from '@mui/material';
 import {
   Warning as WarningIcon,
@@ -17,31 +18,17 @@ import {
 } from '@mui/icons-material';
 
 const ConfirmationModal = ({ 
-  open, 
+  open,
   onClose, 
   onSave, 
   onCancel,
-  title = "تغييرات غير محفوظة",
-  message = "لديك تغييرات غير محفوظة. هل تريد حفظ التغييرات قبل المغادرة؟",
   changesData = null,
-  showChangesPreview = false
+  showChangesPreview = false,
+  isLoading = false
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const handleSave = () => {
-    onSave();
-    onClose();
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    onClose();
-  };
-
-  const handleDiscard = () => {
-    onClose();
-  };
 
   return (
     <Dialog
@@ -73,7 +60,7 @@ const ConfirmationModal = ({
       >
         <WarningIcon sx={{ fontSize: 28 }} />
         <Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
-          {title}
+          تغييرات غير محفوظة
         </Typography>
       </DialogTitle>
 
@@ -89,7 +76,7 @@ const ConfirmationModal = ({
             }
           }}
         >
-          {message}
+          لديك تغييرات غير محفوظة. هل تريد حفظ التغييرات قبل المغادرة؟
         </Alert>
 
         {showChangesPreview && changesData && (
@@ -153,9 +140,9 @@ const ConfirmationModal = ({
         }}
       >
         <Button
-          onClick={handleSave}
+          onClick={onSave}
           variant="contained"
-          startIcon={<SaveIcon />}
+          startIcon={!isLoading && <SaveIcon />}
           color='primary'
           sx={{
             borderRadius: 2,
@@ -164,11 +151,11 @@ const ConfirmationModal = ({
             py: 1.5,
           }}
         >
-          حفظ والمتابعة
+          { isLoading ? <CircularProgress color='white' size={24} /> : "حفظ والمتابعة" }
         </Button>
 
         <Button
-          onClick={handleDiscard}
+          onClick={onClose}
           variant="contained"
           color='warning'
           sx={{
@@ -182,7 +169,7 @@ const ConfirmationModal = ({
         </Button>
 
         <Button
-          onClick={handleCancel}
+          onClick={onCancel}
           variant="contained"
           color='error'
           sx={{

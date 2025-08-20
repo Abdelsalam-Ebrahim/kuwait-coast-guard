@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Paper, 
   Typography, 
@@ -7,7 +7,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   IconButton,
   Chip,
@@ -48,26 +47,26 @@ import CustomTableHead from '../../Ui/TableHead';
 
 
 
-const Archives = ({ employees, onNavigateAway }) => {
+const tableHeadContent = [
+  { label: 'اليوم', style: { px: 2 } },
+  { label: 'التاريخ' },
+  { label: 'الوقت', style: { textAlign: 'center' } },
+  { label: 'المستخدم' },
+  { label: 'النوع', style: { textAlign: 'center' } },
+  { label: 'التفاصيل' },
+  { label: 'الخيارات', style: { textAlign: 'center' } },
+];
+
+
+const Archives = ({ employees, isNav, onNavFreely }) => {
   const theme = useTheme();
   const [expandedRow, setExpandedRow] = useState(null);
 
-  const tableHeadContent = [
-    { label: 'اليوم', style: { px: 2 } },
-    { label: 'التاريخ' },
-    { label: 'الوقت', style: { textAlign: 'center' } },
-    { label: 'المستخدم' },
-    { label: 'النوع', style: { textAlign: 'center' } },
-    { label: 'التفاصيل' },
-    { label: 'الخيارات', style: { textAlign: 'center' } },
-  ];
-
-  // Clear any existing navigation handlers when this component mounts
   useEffect(() => {
-    if (onNavigateAway) {
-      onNavigateAway(null);
+    if(isNav) {
+      onNavFreely(true);
     }
-  }, [onNavigateAway]);
+  }, [isNav]);
 
   // بيانات الأرشيف - كل الأحداث التي تحدث في الموقع
   const [archiveData, setArchiveData] = useState(employees);

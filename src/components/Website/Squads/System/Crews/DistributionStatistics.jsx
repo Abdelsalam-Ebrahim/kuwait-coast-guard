@@ -2,8 +2,11 @@ import React from 'react';
 import { Box } from '@mui/material';
 import EmployeeCard from '../../Ui/EmployeeCard';
 
-const DistributionStatistics = ({ employees }) => {
-  const statistics = employees.length > 0 ? employees[0].statistics : [];
+const DistributionStatistics = ({ statistics }) => {
+
+  if(statistics <= 0) return;
+
+  console.log("statistics: ", statistics);
   
   return (
     <Box sx={{ 

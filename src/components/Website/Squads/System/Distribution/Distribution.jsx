@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Paper, 
   Box,
@@ -6,168 +6,139 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Select,
   MenuItem,
   FormControl,
   useTheme,
+  CircularProgress,
+  Alert,
+  Typography,
 } from '@mui/material';
 import SystemHeader from '../../Ui/SystemHeader';
-import ConfirmationModal from '../../Ui/ConfirmationModal';
-import useUnsavedChanges from '../../shared/useUnsavedChanges';
 import printDistribution from './PrintDistribution';
 import CustomTableHead from '../../Ui/TableHead';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from "../../../../../store/AuthContext";
+import { getAllDistributedPlaces } from '../../../../../util/distributionPlace';
+import { getAllPresentEmployeesBySquad } from '../../../../../util/employeeHttp';
+import { useParams } from 'react-router-dom';
+import ConfirmationModal from '../../Ui/ConfirmationModal';
 
-const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNavigateAway }) => {
+
+const tableHeadContent = [
+  { label: 'الرتبة', style: { px: 3 } },
+  { label: 'المسمى الوظيفي' },
+  { label: 'الاسم' },
+  { label: 'التوزيع', style: { textAlign: 'center' } },
+];
+
+const Distribution = ({ isShownInArchive, onSave, isNav, onNavFreely, isUpdating }) => {
   const theme = useTheme();
+  const { token } = useAuth();
+  const { id } = useParams();
 
-  const tableHeadContent = [
-    { label: 'الرتبة', style: { px: 3 } },
-    { label: 'المسمى الوظيفي' },
-    { label: 'الاسم' },
-    { label: 'التوزيع', style: { textAlign: 'center' } },
-  ];
-  
+  const [showModal, setShowModal] = useState(false);
+  const [updatedEmployees, setUpdatedEmployees] = useState({ data: [], isChanged: false });
+
   const {
-    currentData: currentEmployees,
-    hasChanges,
-    showConfirmationModal,
-    updateData,
-    saveChanges,
-    handleNavigationAttempt,
-    handleConfirmSave,
-    handleConfirmDiscard,
-    handleConfirmCancel,
-    getChangesData,
-    exposeNavigationHandler
-  } = useUnsavedChanges(employees);
+    data: distributionPlaces,
+    isPending: isPendingDistribution,
+    error: errorDistribution,
+    isError: isErrorDistribution
+  } = useQuery({
+    queryKey: ['distributionPlaces'],
+    queryFn: ({ signal }) => getAllDistributedPlaces(signal, token),
+  });
 
-  // Expose navigation check to parent component
+  const {
+    data: presentEmployees,
+    isPending: isPendingPresent,
+    error: errorPresent,
+    isError: isErrorPresent
+  } = useQuery({
+    queryKey: ['presentEmployees', id],
+    queryFn: ({ signal }) => getAllPresentEmployeesBySquad(signal, id, token)
+  });
+
   useEffect(() => {
-    exposeNavigationHandler(onNavigateAway);
-    
-    // Cleanup function to clear navigation handler when component unmounts
-    return () => {
-      if (onNavigateAway) {
-        onNavigateAway(null);
+    if (!isPendingPresent && !isErrorPresent && presentEmployees?.data) {
+      setUpdatedEmployees({ data: structuredClone(presentEmployees.data), isChanged: false });
+    }
+  }, [presentEmployees, isPendingPresent, isErrorPresent]);
+
+  
+  useEffect(() => {
+    if(isNav) {
+      if(updatedEmployees.isChanged) {
+        setShowModal(true);
+      } else {
+        onNavFreely(true);
       }
-    };
-  }, [exposeNavigationHandler, onNavigateAway]);
+    }
+  }, [isNav]);
 
-  // Handle distribution change
-  const handleDistributionChange = (index, newValue) => {
-    if (isShownInArchive) return;
-    
-    const updatedEmployees = [...currentEmployees];
-    updatedEmployees[index] = {
-      ...updatedEmployees[index],
-      distribution: newValue
-    };
-    updateData(updatedEmployees);
-  };
+  if (isPendingPresent) {
+    return (
+      <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "60vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
+  if (isErrorPresent) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          <Typography variant="h6">حدث خطأ ما</Typography>
+          <Typography variant="body2">{errorPresent.message}</Typography>
+        </Alert>
+      </Container>
+    );
+  }
 
-  // Handle save changes
-  const handleSaveChanges = () => {
-    saveChanges(onEmployeesChange);
-  };
+  function onUpdateEmployees(index, value) {
+    setUpdatedEmployees((prev) => {
+      const newEmployees = { ...prev };
+      newEmployees.data = [...newEmployees.data]; // clone array
+      newEmployees.data[index] = { ...newEmployees.data[index], 'distributionPlaceId': value, };
 
-  // Get changes data for preview
-  const getEmployeeChangesData = () => {
-    return getChangesData((originalEmployees, currentEmployees) => {
-      const changes = [];
-      
-      currentEmployees.forEach((employee, index) => {
-        if (employee.distribution !== originalEmployees[index]?.distribution) {
-          changes.push({
-            employeeName: employee.fullName,
-            oldDistribution: originalEmployees[index]?.distribution,
-            newDistribution: employee.distribution
-          });
-        }
-      });
-      
-      return changes;
+      // compare whole array with original presentEmployees
+      const isChanged = newEmployees.data.some((emp, i) => emp['distributionPlaceId'] !== presentEmployees.data[i]['distributionPlaceId']);
+
+      newEmployees.isChanged = isChanged;
+      return newEmployees;
     });
-  };
+  }
 
-  const distributionOptions = [
-    "الادارة",
-    "محجوز",
-    "10",
-    "20",
-    "30",
-    "40",
-    "301",
-    "302",
-    "303",
-    "304",
-    "305",
-    "306",
-    "307",
-    "308",
-    "309",
-    "310",
-    "311",
-    "312",
-    "313",
-    "314",
-    "315",
-    "316",
-    "103",
-    "107",
-    "111",
-    "112",
-    "113",
-    "116",
-    "117",
-    "118",
-    "119",
-    "120",
-    "123",
-    "124",
-    "125",
-    "126",
-    "128",
-    "R01",
-    "R02",
-    "R03",
-    "R04",
-    "R05",
-    "R06",
-    "R07",
-    "R08",
-    "R09",
-    "R10",
-    "R11",
-    "R12",
-    "R30",
-    "R31",
-    "R32",
-    "R33",
-    "R34",
-    "R35",
-    "R36",
-    "R37",
-    "R38",
-    "R39",
-    "R40",
-    "R41",
-    "R42",
-    "701",
-    "702",
-    "703",
-    "704",
-    "705",
-    "706",
-    "707",
-    "710",
-    "711",
-    "712",
-    "713",
-    "714",
-    "715",
-  ];
+  function handleCancelChanges() {
+    setUpdatedEmployees({ data: structuredClone(presentEmployees.data), isChanged: false });
+    setShowModal(false);
+    onNavFreely(true);
+  }
+
+  function handleClosingModal() {
+    setShowModal(false);
+    onNavFreely(false);
+  }
+
+  async function handleOnSubmit() {
+    const isChanged = await onSave(updatedEmployees.data);
+    setShowModal(false);
+
+    if(isChanged) {
+      setUpdatedEmployees((prev) => ({ ...prev, isChanged: false }));
+    } else {
+      setUpdatedEmployees({ data: structuredClone(presentEmployees.data), isChanged: false });
+    }
+  }
 
   return (
     <Box sx={{ py: 3 }}>
@@ -177,10 +148,9 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
             title="إدارة التوزيع"
             isPrinting={true}
             isSaving={true}
-            hasChanges={hasChanges}
-            printFn={() => printDistribution('الاولي', currentEmployees)}
-            saveFn={handleSaveChanges}
-            onNavigationAttempt={handleNavigationAttempt}
+            hasChanges={updatedEmployees.isChanged}
+            printFn={() => printDistribution('الاولي', updatedEmployees.data)}
+            saveFn={() => setShowModal(true)}
           />
         )}
 
@@ -210,7 +180,7 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
             <CustomTableHead columnsName={tableHeadContent} />
 
             <TableBody>
-              {currentEmployees.map((employee, index) => (
+              {updatedEmployees.data.map((employee, index) => (
                 <TableRow 
                   key={index} 
                   sx={{
@@ -245,6 +215,7 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
                   >
                     {employee.rank}
                   </TableCell>
+
                   <TableCell 
                     sx={{ 
                       fontSize: { xs: '0.75rem', sm: '0.9rem' },
@@ -257,6 +228,7 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
                   >
                     {employee.jobTitle}
                   </TableCell>
+
                   <TableCell 
                     sx={{ 
                       fontSize: { xs: '0.8rem', sm: '0.95rem' },
@@ -270,6 +242,7 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
                   >
                     {employee.name}
                   </TableCell>
+
                   <TableCell 
                     sx={{ 
                       py: { xs: 0.5, sm: 1 },
@@ -282,8 +255,8 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
                     <FormControl size="small" sx={{ minWidth: { xs: 110, sm: 140 } }}>
                       <Select
                         disabled={isShownInArchive}
-                        value={employee.distribution === 'اختر التوزيع' ? '' : employee.distribution || ''}
-                        onChange={(e) => handleDistributionChange(index, e.target.value)}
+                        value={employee.distributionPlaceId ? employee.distributionPlaceId : ''}
+                        onChange={(e) => onUpdateEmployees(index, e.target.value)}
                         displayEmpty
                         sx={{
                           fontSize: { xs: '0.75rem', sm: '0.85rem' },
@@ -299,19 +272,25 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
                           },
                         }}
                         MenuProps={{ PaperProps: { sx: { maxHeight: 400 }}}}
-                        renderValue={(selected) => {
-                          if (!selected || selected === '') {
-                            return <span style={{ color: '#9e9e9e' }}>اختر التوزيع</span>;
-                          }
-                          return selected;
-                        }}
                       >
                         <MenuItem value="" disabled sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: 'text.secondary' }}>
                           اختر التوزيع
                         </MenuItem>
-                        {distributionOptions.map((option) => (
-                          <MenuItem key={option} value={option} sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
-                            {option}
+
+                        {isPendingDistribution && <MenuItem disabled>جارٍ التحميل...</MenuItem>}
+
+                        {isErrorDistribution && (
+                          <Box maxWidth="sm" sx={{ mt: 4 }}>
+                            <Alert severity="error">
+                              <Typography variant="h6">حدث خطأ ما</Typography>
+                              <Typography variant="body2">{errorDistribution.message}</Typography>
+                            </Alert>
+                          </Box>
+                        )}
+
+                        {!isPendingDistribution && !isErrorDistribution && distributionPlaces?.data.map((option) => (
+                          <MenuItem key={option.id} value={option.id} sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
+                            {option.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -324,15 +303,15 @@ const Distribution = ({ employees, isShownInArchive, onEmployeesChange, onNaviga
         </TableContainer>
       </Paper>
 
+
       <ConfirmationModal
-        open={showConfirmationModal}
-        onClose={handleConfirmCancel}
-        onSave={() => handleConfirmSave(onEmployeesChange)}
-        onCancel={handleConfirmDiscard}
-        title="تغييرات غير محفوظة في التوزيع"
-        message="لديك تغييرات غير محفوظة في توزيع الموظفين. هل تريد حفظ التغييرات قبل المغادرة؟"
-        changesData={getEmployeeChangesData()}
+        open={showModal}
+        changesData={[]}
         showChangesPreview={true}
+        onClose={handleClosingModal}
+        onCancel={handleCancelChanges}
+        onSave={handleOnSubmit}
+        isLoading={isUpdating}
       />
     </Box>
   );
